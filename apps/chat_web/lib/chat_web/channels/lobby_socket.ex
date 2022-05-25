@@ -1,7 +1,7 @@
 defmodule ChatWeb.LobbySocket do
   use Phoenix.Socket
 
-  channel "lobby", ChatWeb.LobbyChannel
+  channel "rooms:*", ChatWeb.LobbyChannel
 
   def connect(_params, socket) do
     IO.inspect(socket, label: "SOCKET")

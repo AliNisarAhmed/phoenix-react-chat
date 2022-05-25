@@ -12,7 +12,7 @@ defmodule ChatWeb.Endpoint do
 
   # socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
-  socket "/", ChatWeb.LobbySocket,
+  socket "/socket", ChatWeb.LobbySocket,
     websocket: true, longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -23,7 +23,7 @@ defmodule ChatWeb.Endpoint do
     at: "/",
     from: :chat_web,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: ~w(assets fonts images)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
