@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { Provider, useSocket, useChannel } from 'phoenix-provider';
 import { Channel } from 'phoenix';
+import { generate } from 'canihazusername';
 
 interface IProps {}
 
@@ -12,7 +13,15 @@ const App: React.FC<IProps> = (props) => {
 	);
 };
 
+interface ChatMessage {
+	text: string;
+	username: string;
+}
+
 const Main = () => {
+	const [messages, setMessages] = useState<ChatMessage[]>([]);
+	const [messageText, setMessageText] = useState<string>('');
+	const username = useRef(generate());
 	const channel: Channel = useChannel('rooms:lobby');
 
 	useEffect(() => {
@@ -30,6 +39,11 @@ const Main = () => {
 			console.log('event: ', message);
 		});
 
+		channel.on('new_message', (payload) => {
+			console.log('new_message', payload);
+			setMessages((prev) => [...prev, payload]);
+		});
+
 		return () => {
 			channel.leave();
 		};
@@ -37,9 +51,25 @@ const Main = () => {
 
 	return (
 		<div className="">
-			<h1>Hello</h1>
+			<h1>Hello {username.current}</h1>
+			<div>
+				{messages.map((msg) => (
+					<div>
+						<span>{msg.username}</span>: <span>{msg.text}</span>
+					</div>
+				))}
+			</div>
+			<form onSubmit={submitMessage}>
+				<input value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+			</form>
 		</div>
 	);
+
+	function submitMessage(e: FormEvent) {
+		e.preventDefault();
+		channel.push('submit_message', { text: messageText, username: username.current });
+		setMessageText('');
+	}
 };
 
 export default App;

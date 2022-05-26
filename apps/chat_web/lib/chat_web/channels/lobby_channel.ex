@@ -11,4 +11,9 @@ defmodule ChatWeb.LobbyChannel do
     push(socket, "welcome", %{message: "Welcome to lobby"})
     {:noreply, socket}
   end
+
+  def handle_in("submit_message", payload, socket) do
+    broadcast!(socket, "new_message", payload)
+    {:noreply, socket}
+  end
 end

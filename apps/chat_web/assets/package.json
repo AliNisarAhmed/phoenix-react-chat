@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "canihazusername": "^2.2.3",
     "phoenix": "^1.6.9",
     "phoenix-provider": "^2.2.0",
     "react": "^17.0.2",
