@@ -4,7 +4,6 @@ defmodule ChatWeb.LobbySocket do
   channel "rooms:*", ChatWeb.LobbyChannel
 
   def connect(_params, socket) do
-    IO.inspect(socket, label: "SOCKET")
     {:ok, socket}
   end
 

@@ -11,7 +11,8 @@ defmodule Chat.Application do
       # Start the Ecto repository
       Chat.Repo,
       # Start the PubSub system
-      {Phoenix.PubSub, name: Chat.PubSub}
+      {Phoenix.PubSub, name: Chat.PubSub},
+      ChatWeb.LobbyPresence
       # Start a worker by calling: Chat.Worker.start_link(arg)
       # {Chat.Worker, arg}
     ]

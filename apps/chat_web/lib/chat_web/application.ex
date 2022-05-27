@@ -11,7 +11,8 @@ defmodule ChatWeb.Application do
       # Start the Telemetry supervisor
       ChatWeb.Telemetry,
       # Start the Endpoint (http/https)
-      ChatWeb.Endpoint
+      ChatWeb.Endpoint,
+
       # Start a worker by calling: ChatWeb.Worker.start_link(arg)
       # {ChatWeb.Worker, arg}
     ]
