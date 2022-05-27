@@ -2,6 +2,7 @@ import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { Provider, useSocket, useChannel, usePresence } from 'phoenix-provider';
 import { Channel, Presence } from 'phoenix';
 import { generate } from 'canihazusername';
+import { Container, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 
 interface IProps {}
 
@@ -100,9 +101,9 @@ const Main = () => {
 	}, [channel]);
 
 	return (
-		<div className="">
+		<Container>
 			<h1>Hello {username.current}</h1>
-			<div>
+			<Container maxW="720px" bg="whiteAlpha.200" border="2px" borderColor="red.400">
 				{messages.map((msg) => {
 					if (isChatMsg(msg)) {
 						return (
@@ -114,9 +115,16 @@ const Main = () => {
 						return <div>{msg.text}</div>;
 					}
 				})}
-			</div>
+			</Container>
 			<form onSubmit={submitMessage}>
-				<input value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+				<InputGroup>
+					<Input
+						variant="outline"
+						placeholder="Send a message"
+						value={messageText}
+						onChange={(e) => setMessageText(e.target.value)}
+					/>
+				</InputGroup>
 			</form>
 			<div>
 				<h2>Online right now</h2>
@@ -124,7 +132,7 @@ const Main = () => {
 					<p>{user.username}</p>
 				))}
 			</div>
-		</div>
+		</Container>
 	);
 
 	function submitMessage(e: FormEvent) {
