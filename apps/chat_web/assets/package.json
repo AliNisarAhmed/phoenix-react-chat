@@ -1,17 +1,19 @@
 {
   "dependencies": {
+    "@alinisarahmed/phoenix-ts-react": "^0.4.0",
+    "@chakra-ui/icons": "^2.0.1",
     "@chakra-ui/react": "^2.1.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "canihazusername": "^2.2.3",
     "framer-motion": "^6.3.4",
     "phoenix": "^1.6.9",
-    "phoenix-provider": "^2.2.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   },
   "devDependencies": {
     "@types/phoenix": "^1.5.4",
-    "@types/react": "^17.0.45"
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.5"
   }
 }
