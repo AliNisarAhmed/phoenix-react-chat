@@ -1,16 +1,31 @@
-import React, { FormEvent, useEffect, useRef, useState } from 'react';
-import { Provider, useSocket, useChannel, usePresence } from 'phoenix-provider';
+import React, { FormEvent, useContext, useEffect, useRef, useState } from 'react';
 import { Channel, Presence } from 'phoenix';
 import { generate } from 'canihazusername';
-import { Container, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import {
+	ChakraProvider,
+	Container,
+	Flex,
+	Heading,
+	Input,
+	InputGroup,
+	InputRightElement,
+	SimpleGrid,
+} from '@chakra-ui/react';
+import { SocketContext, SocketProvider } from './context/SocketContext';
+import { sendMessage, useChannel } from './hooks/useChannel';
+import { usePresence } from './hooks/usePresence';
+import { useEventHandler } from './hooks/useEventHandler';
+import { EmailIcon } from '@chakra-ui/icons';
 
 interface IProps {}
 
 const App: React.FC<IProps> = (props) => {
 	return (
-		<Provider url={'/socket'} options={{}}>
-			<Main />
-		</Provider>
+		<SocketProvider url={'/socket'}>
+			<ChakraProvider>
+				<Main />
+			</ChakraProvider>
+		</SocketProvider>
 	);
 };
 
@@ -54,90 +69,84 @@ const Main = () => {
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 
 	const username = useRef(generate());
-	const channel: Channel = useChannel('rooms:lobby', { username: username.current });
-	const presence = useRef<Presence>(null);
+	const channel: Channel = useChannel('rooms:lobby', { username: username.current }, (msg) =>
+		console.log('resp on channel JOIN', msg)
+	);
 
-	useEffect(() => {
-		if (!channel) return;
-		channel
-			.join()
-			.receive('ok', (resp) => {
-				console.log('resp on channel joining', resp);
-			})
-			.receive('error', (resp) => {
-				console.log('resp on error: ', resp);
-			});
+	const presence = usePresence(channel, onJoin, onLeave, onSync);
 
-		const presence = new Presence(channel);
+	function onJoin(key, currentPresence) {
+		if (currentPresence && username.current === key) {
+			setMessages((prev) => [...prev, { text: `you joined the chat...` }]);
+		} else if (currentPresence || username.current !== key) {
+			setMessages((prev) => [...prev, { text: `${key} joined the chat...` }]);
+		}
+	}
 
-		presence.onJoin((key, currentPresence) => {
-			if (currentPresence && username.current === key) {
-				setMessages((prev) => [...prev, { text: `you joined the chat...` }]);
-			} else if (currentPresence || username.current !== key) {
-				setMessages((prev) => [...prev, { text: `${key} joined the chat...` }]);
-			}
-		});
+	function onLeave(key, currentPresence) {
+		setMessages((prev) => [...prev, { text: `${key} left the chat...` }]);
+	}
 
-		presence.onLeave((key, currentPresence) => {
-			setMessages((prev) => [...prev, { text: `${key} left the chat...` }]);
-		});
+	function onSync(list: UserMetas[]) {
+		setOnlineUsers(convertUserMetasToUser(list));
+	}
 
-		presence.onSync(() => {
-			setOnlineUsers(convertUserMetasToUser(presence.list()));
-		});
-
-		channel.on('welcome', (message) => {
-			console.log('event: ', message);
-		});
-
-		channel.on('new_message', (payload) => {
-			console.log('new_message', payload);
-			setMessages((prev) => [...prev, payload]);
-		});
-
-		return () => {
-			channel.leave();
-		};
-	}, [channel]);
+	useEventHandler(channel, 'new_message', (payload) => {
+		console.log('payload :>> ', payload);
+		setMessages((prev) => [...prev, payload]);
+	});
 
 	return (
-		<Container>
-			<h1>Hello {username.current}</h1>
-			<Container maxW="720px" bg="whiteAlpha.200" border="2px" borderColor="red.400">
-				{messages.map((msg) => {
-					if (isChatMsg(msg)) {
-						return (
-							<div>
-								<span>{msg.username}</span>: <span>{msg.text}</span>
-							</div>
-						);
-					} else {
-						return <div>{msg.text}</div>;
-					}
-				})}
-			</Container>
-			<form onSubmit={submitMessage}>
-				<InputGroup>
-					<Input
-						variant="outline"
-						placeholder="Send a message"
-						value={messageText}
-						onChange={(e) => setMessageText(e.target.value)}
-					/>
-				</InputGroup>
-			</form>
-			<div>
-				<h2>Online right now</h2>
-				{onlineUsers.map((user) => (
-					<p>{user.username}</p>
-				))}
-			</div>
+		<Container border="2px" maxW="720px">
+			<Heading as="h2" size="lg">
+				Hello {username.current}
+			</Heading>
+			<SimpleGrid columns={2} spacing={10}>
+				<Flex>
+					<Container maxW="720px" bg="whiteAlpha.200" border="2px" borderColor="red.400">
+						{messages.map((msg) => {
+							if (isChatMsg(msg)) {
+								return (
+									<div>
+										<span>{msg.username}</span>: <span>{msg.text}</span>
+									</div>
+								);
+							} else {
+								return <div>{msg.text}</div>;
+							}
+						})}
+					</Container>
+					<form onSubmit={submitMessage}>
+						<InputGroup>
+							<InputRightElement
+								children={<EmailIcon />}
+								pointerEvents="all"
+								color="green.500"
+								fontSize="1.2em"
+							/>
+							<Input
+								variant="outline"
+								placeholder="Send a message"
+								value={messageText}
+								onChange={(e) => setMessageText(e.target.value)}
+							/>
+						</InputGroup>
+					</form>
+				</Flex>
+				<Container>
+					<h2>Online right now</h2>
+					{onlineUsers.map((user) => (
+						<p>{user.username}</p>
+					))}
+				</Container>
+			</SimpleGrid>
 		</Container>
 	);
 
 	function submitMessage(e: FormEvent) {
 		e.preventDefault();
-		channel.push('submit_message', { text: messageText, username: username.current });
+		// channel.push('submit_message', { text: messageText, username: username.current });
+		sendMessage(channel, 'submit_message', { text: messageText, username: username.current });
 		setMessageText('');
 	}
 };
