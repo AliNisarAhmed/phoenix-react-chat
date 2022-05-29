@@ -5,14 +5,16 @@ defmodule ChatWeb.LobbyChannel do
   def join("rooms:lobby", params, socket) do
     IO.inspect(params, label: "Params: ")
     send(self(), :after_join)
-    {:ok, assign(socket, username: params["username"])}
+    {:ok, assign(socket, username: params["username"], color: params["color"])}
   end
 
   def handle_info(:after_join, socket) do
+    IO.inspect(socket.assigns, label: "Socket Assigns")
     {:ok, _} =
       LobbyPresence.track(socket, socket.assigns.username, %{
         username: socket.assigns.username,
-        online_at: inspect(System.system_time(:second))
+        online_at: inspect(System.system_time(:second)),
+        color: socket.assigns.color
       })
 
     push(socket, "presence_state", LobbyPresence.list(socket))

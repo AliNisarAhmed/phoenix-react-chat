@@ -2,7 +2,13 @@ import { Channel, Push } from 'phoenix';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { SocketContext } from '../context/SocketContext';
 
-export function useChannel(topic: string, params: any, onJoin: any): Channel | null {
+type OnJoinFunc = (resp: any) => any;
+
+export function useChannel(
+	topic: string,
+	params: any,
+	onJoin: OnJoinFunc = () => {}
+): Channel | null {
 	const socket = useContext(SocketContext);
 	const [channel, setChannel] = useState<Channel | null>(null);
 
@@ -11,7 +17,7 @@ export function useChannel(topic: string, params: any, onJoin: any): Channel | n
 	useEffect(() => {
 		if (socket) {
 			const _channel = socket.channel(topic, params);
-			_channel.join().receive('ok', (message) => onJoinFunc.current(_channel, message));
+			_channel.join().receive('ok', (message) => onJoinFunc.current(message));
 			setChannel(_channel);
 
 			return () => {
