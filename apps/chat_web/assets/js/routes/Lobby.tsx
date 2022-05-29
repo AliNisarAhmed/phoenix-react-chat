@@ -6,17 +6,11 @@ import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
 import { convertUserMetasToUser, isChatMsg, Msg, User, UserMetas } from '../types';
 import {
-	ChakraProvider,
 	Container,
 	Flex,
 	Heading,
-	Input,
-	InputGroup,
-	InputRightElement,
 	SimpleGrid,
-	Text,
 } from '@chakra-ui/react';
-import { EmailIcon } from '@chakra-ui/icons';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import randomcolor from '../../vendor/randomcolor';
@@ -28,7 +22,6 @@ const Lobby = () => {
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 
 	const user = useRef(generateRandomUser());
-	console.log('user :>> ', user);
 	const channel: Channel = useChannel('rooms:lobby', {
 		username: user.current.username,
 		color: user.current.color,
@@ -49,12 +42,10 @@ const Lobby = () => {
 	}
 
 	function onSync(list: UserMetas[]) {
-		console.log('List: ', list);
 		setOnlineUsers(convertUserMetasToUser(list));
 	}
 
 	useEventHandler(channel, 'new_message', (payload) => {
-		console.log('payload :>> ', payload);
 		setMessages((prev) => [...prev, payload]);
 	});
 
