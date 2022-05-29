@@ -9,7 +9,8 @@
     "framer-motion": "^6.3.4",
     "phoenix": "^1.6.9",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@types/phoenix": "^1.5.4",
