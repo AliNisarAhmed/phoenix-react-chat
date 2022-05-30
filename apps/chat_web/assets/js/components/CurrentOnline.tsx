@@ -1,5 +1,6 @@
-import { Container, Heading, Text, Tag, Box, Flex, Badge } from '@chakra-ui/react';
+import { Container, Heading, Text, Tag, Box, Flex, Badge, Button } from '@chakra-ui/react';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
 import UsernameText from './UsernameText';
 
@@ -8,8 +9,10 @@ interface Props {
 }
 
 const CurrentOnline = ({ onlineUsers }: Props) => {
+	const navigate = useNavigate();
+
 	return (
-		<Container border="2px" px="1rem" py="0.5rem">
+		<Container flexGrow={1}>
 			<Heading as="h6" size="sm" pb="0.5rem">
 				Online right now
 			</Heading>

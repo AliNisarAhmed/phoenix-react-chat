@@ -22,7 +22,7 @@ export interface UserMetas {
 }
 
 export interface User {
-	online_at: string;
+	online_at?: string;
 	username: string;
 	color: string;
 }

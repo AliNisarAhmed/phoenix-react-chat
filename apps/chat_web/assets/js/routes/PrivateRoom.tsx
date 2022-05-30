@@ -1,27 +1,29 @@
+import { Container, Flex, SimpleGrid } from '@chakra-ui/react';
 import generate from 'canihazusername';
-import { Channel } from 'phoenix';
-import React, { FormEvent, useRef, useState } from 'react';
-import { sendMessage, useChannel } from '../hooks/useChannel';
-import { useEventHandler } from '../hooks/useEventHandler';
-import { usePresence } from '../hooks/usePresence';
-import { convertUserMetasToUser, isChatMsg, Msg, User, UserMetas } from '../types';
-import { Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react';
+import React, { FormEvent, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import randomcolor from '../../vendor/randomcolor';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
 import { userCurrentUserContext } from '../context/CurrentUserContext';
-import ActionButton from '../components/ActionButton';
-import { useNavigate } from 'react-router-dom';
+import { sendMessage, useChannel } from '../hooks/useChannel';
+import { useEventHandler } from '../hooks/useEventHandler';
+import { usePresence } from '../hooks/usePresence';
+import { convertUserMetasToUser, Msg, User, UserMetas } from '../types';
 
-const Lobby = () => {
+interface Props {}
+
+const PrivateRoom = ({}) => {
+	const { roomId } = useParams();
+
 	const [messages, setMessages] = useState<Msg[]>([]);
 	const [messageText, setMessageText] = useState<string>('');
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 
-	const navigate = useNavigate();
 	const user = userCurrentUserContext();
 
-	const channel: Channel = useChannel('rooms:lobby', {
+	const channel = useChannel(`rooms:${roomId}`, {
 		username: user.username,
 		color: user.color,
 	});
@@ -33,24 +35,17 @@ const Lobby = () => {
 	});
 
 	return (
-		<Container border="2px" maxW="720px">
-			<SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
-				<Flex direction="column">
-					<MessageDisplay messages={messages} />
-					<MessageSubmit
-						onSubmit={submitMessage}
-						value={messageText}
-						onChange={(e) => setMessageText(e.target.value)}
-					/>
-				</Flex>
-				<Container px="1rem" py="0.5rem">
-					<Flex direction="column" justify="space-between" h="100%">
-						<CurrentOnline onlineUsers={onlineUsers} />
-						<ActionButton onClick={startPrivateChat} />
-					</Flex>
-				</Container>
-			</SimpleGrid>
-		</Container>
+		<SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
+			<Flex direction="column">
+				<MessageDisplay messages={messages} />
+				<MessageSubmit
+					onSubmit={submitMessage}
+					value={messageText}
+					onChange={(e) => setMessageText(e.target.value)}
+				/>
+			</Flex>
+			<CurrentOnline onlineUsers={onlineUsers} />
+		</SimpleGrid>
 	);
 
 	function onJoin(key, currentPresence) {
@@ -66,17 +61,15 @@ const Lobby = () => {
 	}
 
 	function onSync(list: UserMetas[]) {
+		console.log('list: ', list)
 		setOnlineUsers(convertUserMetasToUser(list));
 	}
+
 	function submitMessage(e: FormEvent) {
 		e.preventDefault();
 		sendMessage(channel, 'submit_message', { text: messageText, user });
 		setMessageText('');
 	}
-
-	function startPrivateChat() {
-		navigate('/rooms/privateRoom101', { replace: true });
-	}
 };
 
-export default Lobby;
+export default PrivateRoom;
