@@ -12,6 +12,7 @@ import MessageSubmit from '../components/MessageSubmit';
 import { userCurrentUserContext } from '../context/CurrentUserContext';
 import ActionButton from '../components/ActionButton';
 import { useNavigate } from 'react-router-dom';
+import ky from 'ky';
 
 const Lobby = () => {
 	const [messages, setMessages] = useState<Msg[]>([]);
@@ -46,7 +47,7 @@ const Lobby = () => {
 				<Container px="1rem" py="0.5rem">
 					<Flex direction="column" justify="space-between" h="100%">
 						<CurrentOnline onlineUsers={onlineUsers} />
-						<ActionButton onClick={startPrivateChat} />
+						<ActionButton onClick={async () => await startPrivateChat()} />
 					</Flex>
 				</Container>
 			</SimpleGrid>
@@ -74,8 +75,13 @@ const Lobby = () => {
 		setMessageText('');
 	}
 
-	function startPrivateChat() {
-		navigate('/rooms/privateRoom101', { replace: true });
+	async function startPrivateChat() {
+		const { room_id } = await ky
+			.post('/api/rooms', {
+				json: { owner: user.username, invitees: [] },
+			})
+			.json<{ room_id: string }>();
+		navigate(`/rooms/${room_id}`, { replace: true });
 	}
 };
 
