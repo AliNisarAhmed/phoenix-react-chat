@@ -14,6 +14,12 @@ defmodule ChatWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/api", CharWeb do
+    pipe_through :api
+
+    post "/rooms", ChatRoomController, :create
+  end
+
   scope "/", ChatWeb do
     pipe_through :browser
 
