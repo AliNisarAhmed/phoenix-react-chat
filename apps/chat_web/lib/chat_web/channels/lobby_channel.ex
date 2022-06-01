@@ -1,6 +1,7 @@
 defmodule ChatWeb.LobbyChannel do
   use Phoenix.Channel
   alias ChatWeb.LobbyPresence
+  alias Chat.PrivateRooms
 
   def join("rooms:lobby", params, socket) do
     IO.inspect(params, label: "Params: ")
@@ -8,10 +9,16 @@ defmodule ChatWeb.LobbyChannel do
     {:ok, assign(socket, username: params["username"], color: params["color"])}
   end
 
-  def join("rooms:" <> _roomId, params, socket) do
-    IO.inspect(params, label: "Private Room Params: ")
-    send(self(), :after_join_private_room)
-    {:ok, assign(socket, username: params["username"], color: params["color"])}
+  def join("rooms:" <> room_id, params, socket) do
+    username = params["username"]
+
+    if PrivateRooms.is_user_invited?(username, room_id) do
+      IO.inspect(params, label: "Private Room Params: ")
+      send(self(), :after_join_private_room)
+      {:ok, assign(socket, username: username, color: params["color"])}
+    else
+      {:error, "not invited"}
+    end
   end
 
   def handle_info(:after_join, socket) do
