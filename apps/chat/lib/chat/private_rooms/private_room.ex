@@ -12,7 +12,6 @@ defmodule Chat.PrivateRooms.PrivateRoom do
 
   @doc false
   def changeset(private_room, attrs) do
-    IO.inspect(attrs, label: "ATTRS")
     private_room
     |> cast(attrs, [:owner, :room_id, :invitees])
     |> validate_required([:owner])

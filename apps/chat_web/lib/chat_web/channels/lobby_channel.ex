@@ -43,4 +43,8 @@ defmodule ChatWeb.LobbyChannel do
     broadcast!(socket, "new_message", payload)
     {:noreply, socket}
   end
+
+  def terminate(reason, _socket) do
+    IO.inspect(reason, label: "Terminate reason")
+  end
 end

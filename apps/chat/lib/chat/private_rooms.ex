@@ -10,7 +10,6 @@ defmodule Chat.PrivateRooms do
     resp =
       %PrivateRoom{}
       |> PrivateRoom.changeset(attrs)
-      |> IO.inspect(label: "Before Ecto")
       |> Repo.insert()
 
     resp
