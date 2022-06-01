@@ -1,8 +1,6 @@
 import { Container, Flex, SimpleGrid } from '@chakra-ui/react';
-import generate from 'canihazusername';
 import React, { FormEvent, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import randomcolor from '../../vendor/randomcolor';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
@@ -14,7 +12,7 @@ import { convertUserMetasToUser, Msg, User, UserMetas } from '../types';
 
 interface Props {}
 
-const PrivateRoom = ({}) => {
+const PrivateRoom = ({}: Props) => {
 	const { roomId } = useParams();
 
 	const [messages, setMessages] = useState<Msg[]>([]);
@@ -23,10 +21,17 @@ const PrivateRoom = ({}) => {
 
 	const user = userCurrentUserContext();
 
-	const channel = useChannel(`rooms:${roomId}`, {
-		username: user.username,
-		color: user.color,
-	});
+	const channel = useChannel(
+		`rooms:${roomId}`,
+		{
+			username: user.username,
+			color: user.color,
+		},
+		(resp) => {
+			console.log('resp on joining', resp);
+		},
+		(resp) => console.log('resp on error: ', resp)
+	);
 
 	usePresence(channel, onJoin, onLeave, onSync);
 
@@ -61,7 +66,7 @@ const PrivateRoom = ({}) => {
 	}
 
 	function onSync(list: UserMetas[]) {
-		console.log('list: ', list)
+		console.log('list: ', list);
 		setOnlineUsers(convertUserMetasToUser(list));
 	}
 

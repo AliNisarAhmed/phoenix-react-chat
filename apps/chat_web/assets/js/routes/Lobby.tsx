@@ -13,14 +13,17 @@ import { userCurrentUserContext } from '../context/CurrentUserContext';
 import ActionButton from '../components/ActionButton';
 import { useNavigate } from 'react-router-dom';
 import ky from 'ky';
+import InviteDrawer from '../components/InviteDrawer';
 
 const Lobby = () => {
 	const [messages, setMessages] = useState<Msg[]>([]);
 	const [messageText, setMessageText] = useState<string>('');
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+	const [inviteDrawerOpen, setInviteDrawerOpen] = useState<boolean>(false);
 
 	const navigate = useNavigate();
 	const user = userCurrentUserContext();
+	const openButtonRef = useRef();
 
 	const channel: Channel = useChannel('rooms:lobby', {
 		username: user.username,
@@ -47,12 +50,26 @@ const Lobby = () => {
 				<Container px="1rem" py="0.5rem">
 					<Flex direction="column" justify="space-between" h="100%">
 						<CurrentOnline onlineUsers={onlineUsers} />
-						<ActionButton onClick={async () => await startPrivateChat()} />
+						<ActionButton onClick={openInviteDrawer} ref={openButtonRef} />
 					</Flex>
 				</Container>
 			</SimpleGrid>
+			<InviteDrawer
+				isOpen={inviteDrawerOpen}
+				onClose={closeInviteDrawer}
+				btnRef={openButtonRef}
+				onlineUsers={onlineUsers.filter((u) => u.username !== user.username)}
+			/>
 		</Container>
 	);
+
+	function openInviteDrawer() {
+		setInviteDrawerOpen((prev) => !prev);
+	}
+
+	function closeInviteDrawer() {
+		setInviteDrawerOpen(false);
+	}
 
 	function onJoin(key, currentPresence) {
 		if (currentPresence && user.username === key) {
