@@ -20,11 +20,20 @@ interface Props {
 	onClose: () => void;
 	btnRef: any;
 	onlineUsers: User[];
+	drawerAction: () => Promise<void>;
+	groupValue: string[];
+	groupOnChange: (value: string[]) => void;
 }
 
-const InviteDrawer = ({ isOpen, onClose, btnRef, onlineUsers }: Props) => {
-	const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
-
+const InviteDrawer = ({
+	isOpen,
+	onClose,
+	btnRef,
+	onlineUsers,
+	drawerAction,
+	groupValue,
+	groupOnChange,
+}: Props) => {
 	return (
 		<>
 			<Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="md">
@@ -33,7 +42,7 @@ const InviteDrawer = ({ isOpen, onClose, btnRef, onlineUsers }: Props) => {
 					<DrawerCloseButton />
 					<DrawerHeader>Create a Private Room</DrawerHeader>
 					<DrawerBody>
-						<CheckboxGroup value={invitedUsers} onChange={(v) => setInvitedUsers(v as string[])}>
+						<CheckboxGroup value={groupValue} onChange={groupOnChange}>
 							<VStack>
 								{onlineUsers.map((user, index) => (
 									<Checkbox value={user.username} key={index}>
@@ -47,7 +56,9 @@ const InviteDrawer = ({ isOpen, onClose, btnRef, onlineUsers }: Props) => {
 						<Button variant="outline" onClick={onClose}>
 							Cancel
 						</Button>
-						<Button colorScheme="blue">Start</Button>
+						<Button colorScheme="blue" onClick={async () => await drawerAction()}>
+							Start
+						</Button>
 					</DrawerFooter>
 				</DrawerContent>
 			</Drawer>

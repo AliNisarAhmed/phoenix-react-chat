@@ -20,6 +20,7 @@ const Lobby = () => {
 	const [messageText, setMessageText] = useState<string>('');
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 	const [inviteDrawerOpen, setInviteDrawerOpen] = useState<boolean>(false);
+	const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
 
 	const navigate = useNavigate();
 	const user = userCurrentUserContext();
@@ -34,6 +35,11 @@ const Lobby = () => {
 
 	useEventHandler(channel, 'new_message', (payload) => {
 		setMessages((prev) => [...prev, payload]);
+	});
+
+	useEventHandler(channel, 'leave_lobby', () => {
+		console.log('Leave Lobby message received');
+		channel.leave();
 	});
 
 	return (
@@ -59,6 +65,9 @@ const Lobby = () => {
 				onClose={closeInviteDrawer}
 				btnRef={openButtonRef}
 				onlineUsers={onlineUsers.filter((u) => u.username !== user.username)}
+				drawerAction={startPrivateChat}
+				groupValue={invitedUsers}
+				groupOnChange={(v) => setInvitedUsers(v)}
 			/>
 		</Container>
 	);
@@ -72,6 +81,7 @@ const Lobby = () => {
 	}
 
 	function onJoin(key, currentPresence) {
+		console.log('onJoin called');
 		if (currentPresence && user.username === key) {
 			setMessages((prev) => [...prev, { text: `you joined the chat...` }]);
 		} else if (currentPresence || user.username !== key) {
@@ -80,10 +90,12 @@ const Lobby = () => {
 	}
 
 	function onLeave(key: string) {
+		console.log('onLeave called');
 		setMessages((prev) => [...prev, { text: `${key} left the chat...` }]);
 	}
 
 	function onSync(list: UserMetas[]) {
+		console.log('On Sync called');
 		setOnlineUsers(convertUserMetasToUser(list));
 	}
 	function submitMessage(e: FormEvent) {
@@ -95,10 +107,13 @@ const Lobby = () => {
 	async function startPrivateChat() {
 		const { room_id } = await ky
 			.post('/api/rooms', {
-				json: { owner: user.username, invitees: [] },
+				json: { owner: user.username, invitees: invitedUsers },
 			})
 			.json<{ room_id: string }>();
-		navigate(`/rooms/${room_id}`, { replace: true });
+
+		channel.leave();
+
+		navigate(`/rooms/${room_id}`);
 	}
 };
 
