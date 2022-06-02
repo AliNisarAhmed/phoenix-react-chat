@@ -21,6 +21,11 @@ defmodule ChatWeb.LobbyChannel do
     end
   end
 
+  def join("users:" <> _username, _params, socket) do
+    IO.inspect(socket.assigns, label: "JOINING OWN CHANNEL")
+    {:ok, socket}
+  end
+
   def handle_info(:after_join, socket) do
     IO.inspect(socket.assigns, label: "Socket Assigns")
 

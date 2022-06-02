@@ -5,6 +5,15 @@ defmodule ChatWeb.PrivateRoomController do
 
   def create(conn, params) do
     with {:ok, room} <- PrivateRooms.create_private_room(params) do
+      IO.inspect(room, label: "CREATED ROOM")
+
+      for username <- room.invitees do
+        ChatWeb.Endpoint.broadcast!("users:" <> username, "invitation", %{
+          room_id: room.room_id,
+          owner: room.owner
+        })
+      end
+
       render(conn, "create.json", %{room: room})
     end
   end
