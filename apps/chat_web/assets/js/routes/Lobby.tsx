@@ -1,11 +1,19 @@
-import generate from 'canihazusername';
 import { Channel } from 'phoenix';
 import React, { FormEvent, useRef, useState } from 'react';
 import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
 import { convertUserMetasToUser, isChatMsg, Msg, User, UserMetas } from '../types';
-import { Container, Flex, Heading, SimpleGrid } from '@chakra-ui/react';
+import {
+	Box,
+	Button,
+	Container,
+	Flex,
+	Heading,
+	SimpleGrid,
+	useToast,
+	Text,
+} from '@chakra-ui/react';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
@@ -22,6 +30,9 @@ const Lobby = () => {
 	const [inviteDrawerOpen, setInviteDrawerOpen] = useState<boolean>(false);
 	const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
 
+	const toast = useToast();
+	const toastIdRef = useRef();
+
 	const navigate = useNavigate();
 	const user = userCurrentUserContext();
 	const openButtonRef = useRef();
@@ -29,6 +40,30 @@ const Lobby = () => {
 	const channel: Channel = useChannel('rooms:lobby', {
 		username: user.username,
 		color: user.color,
+	});
+
+	const personalChannel = useChannel(`users:${user.username}`, {
+		username: user.username,
+	});
+
+	useEventHandler(personalChannel, 'invitation', ({ owner, room_id }) => {
+		toast({
+			position: 'bottom-right',
+			status: 'info',
+			variant: 'left-accent',
+			duration: 9000,
+			render: () => (
+				<Box bg="green.200" p="10">
+					<Text>{owner} has invited you to join their private room!</Text>
+					<Button variant="outline" onClick={closeToast}>
+						Reject
+					</Button>
+					<Button variant="solid" onClick={() => acceptInvite(room_id)}>
+						Join
+					</Button>
+				</Box>
+			),
+		});
 	});
 
 	usePresence(channel, onJoin, onLeave, onSync);
@@ -71,6 +106,17 @@ const Lobby = () => {
 			/>
 		</Container>
 	);
+
+	function closeToast() {
+		if (toastIdRef.current) {
+			toast.close(toastIdRef.current);
+		}
+	}
+
+	function acceptInvite(room_id: string) {
+		console.log('navigation to ', room_id);
+		navigate(`/rooms/${room_id}`);
+	}
 
 	function openInviteDrawer() {
 		setInviteDrawerOpen((prev) => !prev);
