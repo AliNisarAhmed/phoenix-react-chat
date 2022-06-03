@@ -15,6 +15,13 @@ defmodule Chat.PrivateRooms do
     resp
   end
 
+  def delete_private_room(room_id_string) do
+    with {:ok, room_id} <- Ecto.UUID.cast(room_id_string) do
+      from(x in PrivateRoom, where: x.room_id == ^room_id)
+      |> Repo.delete_all()
+    end
+  end
+
   def is_user_invited?(username, room_id_string) do
     with {:ok, room_id} <- Ecto.UUID.cast(room_id_string),
          room when not is_nil(room) <- Repo.get_by(PrivateRoom, room_id: room_id) do

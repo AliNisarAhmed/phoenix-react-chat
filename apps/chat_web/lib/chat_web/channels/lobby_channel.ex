@@ -58,6 +58,7 @@ defmodule ChatWeb.LobbyChannel do
 
   def handle_in("private_room_closed" = event_name, payload, socket) do
     broadcast!(socket, event_name, payload)
+    PrivateRooms.delete_private_room(payload["room_id"])
     {:noreply, socket}
   end
 

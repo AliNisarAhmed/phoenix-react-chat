@@ -88,7 +88,7 @@ const PrivateRoom = ({}: Props) => {
 
 	function goBackToLobby() {
 		if (owner === user.username) {
-			sendMessage(channel, 'private_room_closed', {});
+			sendMessage(channel, 'private_room_closed', { room_id: roomId });
 		}
 		channel.leave();
 		navigate('/');
