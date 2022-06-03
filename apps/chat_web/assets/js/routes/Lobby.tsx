@@ -4,16 +4,7 @@ import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
 import { convertUserMetasToUser, isChatMsg, Msg, User, UserMetas } from '../types';
-import {
-	Box,
-	Button,
-	Container,
-	Flex,
-	Heading,
-	SimpleGrid,
-	useToast,
-	Text,
-} from '@chakra-ui/react';
+import { Container, Flex, SimpleGrid, useToast } from '@chakra-ui/react';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
@@ -22,6 +13,7 @@ import ActionButton from '../components/ActionButton';
 import { useNavigate } from 'react-router-dom';
 import ky from 'ky';
 import InviteDrawer from '../components/InviteDrawer';
+import Toast from '../components/Toast';
 
 const Lobby = () => {
 	const [messages, setMessages] = useState<Msg[]>([]);
@@ -53,15 +45,7 @@ const Lobby = () => {
 			variant: 'left-accent',
 			duration: 9000,
 			render: () => (
-				<Box bg="green.200" p="10">
-					<Text>{owner} has invited you to join their private room!</Text>
-					<Button variant="outline" onClick={closeToast}>
-						Reject
-					</Button>
-					<Button variant="solid" onClick={() => acceptInvite(room_id)}>
-						Join
-					</Button>
-				</Box>
+				<Toast owner={owner} onClose={closeToast} onAccept={() => acceptInvite(room_id)} />
 			),
 		});
 	});
