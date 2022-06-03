@@ -8,12 +8,13 @@ import { Container, Flex, SimpleGrid, useToast } from '@chakra-ui/react';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
-import { userCurrentUserContext } from '../context/CurrentUserContext';
+import { useCurrentUserContext } from '../context/CurrentUserContext';
 import ActionButton from '../components/ActionButton';
 import { useNavigate } from 'react-router-dom';
 import ky from 'ky';
 import InviteDrawer from '../components/InviteDrawer';
 import Toast from '../components/Toast';
+import { useNavbarContext } from '../components/Navbar';
 
 const Lobby = () => {
 	const [messages, setMessages] = useState<Msg[]>([]);
@@ -26,7 +27,9 @@ const Lobby = () => {
 	const toastIdRef = useRef();
 
 	const navigate = useNavigate();
-	const user = userCurrentUserContext();
+	const user = useCurrentUserContext();
+	const { setOwner } = useNavbarContext();
+
 	const openButtonRef = useRef();
 
 	const channel: Channel = useChannel('rooms:lobby', {
@@ -39,13 +42,21 @@ const Lobby = () => {
 	});
 
 	useEventHandler(personalChannel, 'invitation', ({ owner, room_id }) => {
+		setOwner(owner);
 		toast({
 			position: 'bottom-right',
 			status: 'info',
 			variant: 'left-accent',
 			duration: 9000,
 			render: () => (
-				<Toast owner={owner} onClose={closeToast} onAccept={() => acceptInvite(room_id)} />
+				<Toast
+					owner={owner}
+					onClose={closeToast}
+					onAccept={() => {
+						closeToast();
+						acceptInvite(room_id);
+					}}
+				/>
 			),
 		});
 	});
@@ -141,6 +152,7 @@ const Lobby = () => {
 			})
 			.json<{ room_id: string }>();
 
+		setOwner(user.username);
 		channel.leave();
 
 		navigate(`/rooms/${room_id}`);

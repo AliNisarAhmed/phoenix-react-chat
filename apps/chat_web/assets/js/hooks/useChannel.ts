@@ -23,7 +23,10 @@ export function useChannel(
 			_channel
 				.join()
 				.receive('ok', (message) => onJoinFunc.current(message))
-				.receive('error', onErrorFunc.current);
+				.receive('error', (resp) => {
+					_channel.leave();
+					onErrorFunc.current(resp);
+				});
 			setChannel(_channel);
 
 			return () => {

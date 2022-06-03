@@ -19,6 +19,8 @@ defmodule Chat.PrivateRooms do
     with {:ok, room_id} <- Ecto.UUID.cast(room_id_string),
          room when not is_nil(room) <- Repo.get_by(PrivateRoom, room_id: room_id) do
       room.owner == username or Enum.member?(room.invitees, username)
+    else
+      _ -> false
     end
   end
 end

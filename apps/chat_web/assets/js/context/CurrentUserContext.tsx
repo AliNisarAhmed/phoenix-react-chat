@@ -11,7 +11,7 @@ export const CurrentUserProvider = ({ children }) => {
 	return <CurrentUserContext.Provider value={user.current}>{children}</CurrentUserContext.Provider>;
 };
 
-export const userCurrentUserContext = () => {
+export const useCurrentUserContext = () => {
 	const context = useContext(CurrentUserContext);
 	if (!context) {
 		throw new Error('probably forgot to wrap things with CurrentUserProvider');
