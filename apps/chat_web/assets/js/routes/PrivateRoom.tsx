@@ -1,5 +1,5 @@
-import { Container, Flex, SimpleGrid, Spinner } from '@chakra-ui/react';
-import React, { FormEvent, useEffect, useState } from 'react';
+import { Button, Container, Flex, SimpleGrid, Spinner } from '@chakra-ui/react';
+import React, { FormEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
@@ -29,6 +29,7 @@ const PrivateRoom = ({}: Props) => {
 	// }, []);
 
 	const user = useCurrentUserContext();
+	const { owner } = useNavbarContext();
 
 	const channel = useChannel(
 		`rooms:${roomId}`,
@@ -54,6 +55,12 @@ const PrivateRoom = ({}: Props) => {
 		setMessages((prev) => [...prev, payload]);
 	});
 
+	useEventHandler(channel, 'private_room_closed', () => {
+		console.log('private_room_closed', channel);
+		channel?.leave();
+		navigate('/');
+	});
+
 	if (pageState === 'loading') {
 		return (
 			<Container centerContent>
@@ -65,6 +72,9 @@ const PrivateRoom = ({}: Props) => {
 	return (
 		<SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
 			<Flex direction="column">
+				<Button onClick={goBackToLobby} colorScheme="blue">
+					Go back to Lobby
+				</Button>
 				<MessageDisplay messages={messages} />
 				<MessageSubmit
 					onSubmit={submitMessage}
@@ -75,6 +85,14 @@ const PrivateRoom = ({}: Props) => {
 			<CurrentOnline onlineUsers={onlineUsers} />
 		</SimpleGrid>
 	);
+
+	function goBackToLobby() {
+		if (owner === user.username) {
+			sendMessage(channel, 'private_room_closed', {});
+		}
+		channel.leave();
+		navigate('/');
+	}
 
 	function onJoin(key, currentPresence) {
 		if (currentPresence && user.username === key) {
@@ -95,6 +113,7 @@ const PrivateRoom = ({}: Props) => {
 
 	function submitMessage(e: FormEvent) {
 		e.preventDefault();
+		console.log('submitting a message', channel);
 		sendMessage(channel, 'submit_message', { text: messageText, user });
 		setMessageText('');
 	}

@@ -21,7 +21,7 @@ defmodule ChatWeb.LobbyChannel do
     end
   end
 
-  def join("users:" <> _username, _params, socket) do
+  def join("users:" <> username, _params, socket) do
     IO.inspect(socket.assigns, label: "JOINING OWN CHANNEL")
     {:ok, socket}
   end
@@ -41,11 +41,23 @@ defmodule ChatWeb.LobbyChannel do
   end
 
   def handle_info(:after_join_private_room, socket) do
+    {:ok, _} =
+      LobbyPresence.track(socket, socket.assigns.username, %{
+        username: socket.assigns.username,
+        color: socket.assigns.color
+      })
+
+    push(socket, "presence_state", LobbyPresence.list(socket))
     {:noreply, socket}
   end
 
   def handle_in("submit_message", payload, socket) do
     broadcast!(socket, "new_message", payload)
+    {:noreply, socket}
+  end
+
+  def handle_in("private_room_closed" = event_name, payload, socket) do
+    broadcast!(socket, event_name, payload)
     {:noreply, socket}
   end
 
