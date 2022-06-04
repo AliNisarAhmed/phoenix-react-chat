@@ -22,6 +22,21 @@ defmodule Chat.PrivateRooms do
     end
   end
 
+  def remove_user_from_invite_list(room_id_string, username) do
+    with {:ok, room_id} <- Ecto.UUID.cast(room_id_string),
+         room when not is_nil(room) <- Repo.get_by(PrivateRoom, room_id: room_id) do
+      new_invite_list =
+        room.invitees
+        |> Enum.filter(&(&1 != username))
+
+      changeset = PrivateRoom.changeset(room, %{invitees: new_invite_list})
+
+      IO.inspect(changeset, label: "UPDATE ROOM CHANGESET")
+
+      Repo.update!(changeset)
+    end
+  end
+
   def is_user_invited?(username, room_id_string) do
     with {:ok, room_id} <- Ecto.UUID.cast(room_id_string),
          room when not is_nil(room) <- Repo.get_by(PrivateRoom, room_id: room_id) do

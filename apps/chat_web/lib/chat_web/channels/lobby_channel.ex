@@ -62,6 +62,12 @@ defmodule ChatWeb.LobbyChannel do
     {:noreply, socket}
   end
 
+  def handle_in("kick_user" = event_name, payload, socket) do
+    broadcast!(socket, event_name, payload)
+    PrivateRooms.remove_user_from_invite_list(payload["room_id"], payload["username"])
+    {:noreply, socket}
+  end
+
   def terminate(reason, _socket) do
     IO.inspect(reason, label: "Terminate reason")
   end
