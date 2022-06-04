@@ -85,7 +85,7 @@ const Lobby = () => {
 				</Flex>
 				<Container px="1rem" py="0.5rem">
 					<Flex direction="column" justify="space-between" h="100%">
-						<CurrentOnline onlineUsers={onlineUsers} />
+						<CurrentOnline onlineUsers={onlineUsers} currentUser={user} />
 						<ActionButton onClick={openInviteDrawer} ref={openButtonRef} />
 					</Flex>
 				</Container>

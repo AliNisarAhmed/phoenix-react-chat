@@ -7,7 +7,7 @@ export function useEventHandler(channel: Channel | null, eventName: string, hand
 	useEffect(() => {
 		if (channel) {
 			const ref = channel.on(eventName, (message) => {
-				handlerFunc.current(message);
+				handlerFunc.current(message, channel);
 			});
 
 			return () => {

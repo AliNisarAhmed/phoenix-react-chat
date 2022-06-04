@@ -55,10 +55,17 @@ const PrivateRoom = ({}: Props) => {
 		setMessages((prev) => [...prev, payload]);
 	});
 
-	useEventHandler(channel, 'private_room_closed', () => {
+	useEventHandler(channel, 'private_room_closed', (_, _channel) => {
 		console.log('private_room_closed', channel);
-		channel?.leave();
+		_channel?.leave();
 		navigate('/');
+	});
+
+	useEventHandler(channel, 'kick_user', ({ username }, _channel) => {
+		if (username === user.username) {
+			_channel?.leave();
+			navigate('/');
+		}
 	});
 
 	if (pageState === 'loading') {
@@ -82,9 +89,18 @@ const PrivateRoom = ({}: Props) => {
 					onChange={(e) => setMessageText(e.target.value)}
 				/>
 			</Flex>
-			<CurrentOnline onlineUsers={onlineUsers} />
+			<CurrentOnline
+				onlineUsers={onlineUsers.filter((u) => u.username !== user.username)}
+				privateRoom
+				currentUser={user}
+				kickUser={kickUser}
+			/>
 		</SimpleGrid>
 	);
+
+	function kickUser(username: string) {
+		sendMessage(channel, 'kick_user', { username, room_id: roomId });
+	}
 
 	function goBackToLobby() {
 		if (owner === user.username) {
