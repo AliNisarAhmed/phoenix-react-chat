@@ -1,5 +1,5 @@
 import React, { useRef, createContext, useContext } from 'react';
-import generate from 'canihazusername';
+import { generate } from 'canihazusername';
 import randomcolor from '../../vendor/randomcolor';
 import { User } from '../types';
 
