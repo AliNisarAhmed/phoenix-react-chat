@@ -22,6 +22,7 @@ const Lobby = () => {
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 	const [inviteDrawerOpen, setInviteDrawerOpen] = useState<boolean>(false);
 	const [invitedUsers, setInvitedUsers] = useState<string[]>([]);
+	const [topic, setTopic] = useState<string>('');
 
 	const toast = useToast();
 	const toastIdRef = useRef();
@@ -98,6 +99,8 @@ const Lobby = () => {
 				drawerAction={startPrivateChat}
 				groupValue={invitedUsers}
 				groupOnChange={(v) => setInvitedUsers(v)}
+				topicValue={topic}
+				topicOnChange={(e) => setTopic(e.target.value)}
 			/>
 		</Container>
 	);
@@ -118,6 +121,8 @@ const Lobby = () => {
 	}
 
 	function closeInviteDrawer() {
+		setTopic('');
+		setInvitedUsers([]);
 		setInviteDrawerOpen(false);
 	}
 
@@ -148,7 +153,7 @@ const Lobby = () => {
 	async function startPrivateChat() {
 		const { room_id } = await ky
 			.post('/api/rooms', {
-				json: { owner: user.username, invitees: invitedUsers },
+				json: { owner: user.username, invitees: invitedUsers, topic },
 			})
 			.json<{ room_id: string }>();
 

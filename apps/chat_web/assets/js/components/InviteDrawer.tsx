@@ -1,7 +1,5 @@
 import {
 	Button,
-	Checkbox,
-	CheckboxGroup,
 	Drawer,
 	DrawerBody,
 	DrawerCloseButton,
@@ -9,11 +7,14 @@ import {
 	DrawerFooter,
 	DrawerHeader,
 	DrawerOverlay,
-	VStack,
+	Flex,
+	Input,
+	InputGroup,
+	InputLeftAddon,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { User } from '../types';
-import UsernameText from './UsernameText';
+import SelectUsersToInvite from './SelectUsersToInvite';
 
 interface Props {
 	isOpen: boolean;
@@ -23,6 +24,8 @@ interface Props {
 	drawerAction: () => Promise<void>;
 	groupValue: string[];
 	groupOnChange: (value: string[]) => void;
+	topicValue: string;
+	topicOnChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 const InviteDrawer = ({
@@ -33,6 +36,8 @@ const InviteDrawer = ({
 	drawerAction,
 	groupValue,
 	groupOnChange,
+	topicValue,
+	topicOnChange,
 }: Props) => {
 	return (
 		<>
@@ -42,21 +47,29 @@ const InviteDrawer = ({
 					<DrawerCloseButton />
 					<DrawerHeader>Create a Private Room</DrawerHeader>
 					<DrawerBody>
-						<CheckboxGroup value={groupValue} onChange={groupOnChange}>
-							<VStack>
-								{onlineUsers.map((user, index) => (
-									<Checkbox value={user.username} key={index}>
-										<UsernameText user={user} />
-									</Checkbox>
-								))}
-							</VStack>
-						</CheckboxGroup>
+						<Flex direction="column" justify="space-evenly" h="100%">
+							<InputGroup justifySelf="start">
+								<InputLeftAddon children="Topic" />
+								<Input
+									variant="outline"
+									value={topicValue}
+									onChange={topicOnChange}
+									placeholder="Choose a topic for your private room"
+									aria-label=""
+								/>
+							</InputGroup>
+							<SelectUsersToInvite
+								onlineUsers={onlineUsers}
+								groupOnChange={groupOnChange}
+								groupValue={groupValue}
+							/>
+						</Flex>
 					</DrawerBody>
 					<DrawerFooter>
-						<Button variant="outline" onClick={onClose}>
+						<Button variant="outline" onClick={onClose} mr="1rem" w="5rem">
 							Cancel
 						</Button>
-						<Button colorScheme="blue" onClick={async () => await drawerAction()}>
+						<Button w="5rem" colorScheme="blue" onClick={async () => await drawerAction()}>
 							Start
 						</Button>
 					</DrawerFooter>
