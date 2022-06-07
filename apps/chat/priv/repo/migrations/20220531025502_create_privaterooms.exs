@@ -6,6 +6,7 @@ defmodule Chat.Repo.Migrations.CreatePrivaterooms do
       add :owner, :string
       add :room_id, :uuid
       add :invitees, {:array, :string}
+      add :topic, :string
 
       timestamps()
     end
