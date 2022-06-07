@@ -5,7 +5,7 @@
     "@chakra-ui/react": "^2.1.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
-    "canihazusername": "^2.3.3",
+    "canihazusername": "^2.3.4",
     "framer-motion": "^6.3.4",
     "ky": "^0.30.0",
     "phoenix": "^1.6.9",
