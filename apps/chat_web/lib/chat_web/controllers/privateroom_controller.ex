@@ -10,7 +10,8 @@ defmodule ChatWeb.PrivateRoomController do
       for username <- room.invitees do
         ChatWeb.Endpoint.broadcast!("users:" <> username, "invitation", %{
           room_id: room.room_id,
-          owner: room.owner
+          owner: room.owner,
+          topic: room.topic
         })
       end
 
