@@ -1,4 +1,4 @@
-import { Button, Container, Flex, SimpleGrid, Spinner } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, Heading, SimpleGrid, Spinner, Text } from '@chakra-ui/react';
 import React, { FormEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import CurrentOnline from '../components/CurrentOnline';
@@ -24,12 +24,8 @@ const PrivateRoom = ({}: Props) => {
 	const [messageText, setMessageText] = useState<string>('');
 	const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 
-	// useEffect(() => {
-	// 	ky.get('/rooms/${roomId}/info');
-	// }, []);
-
 	const user = useCurrentUserContext();
-	const { owner } = useNavbarContext();
+	const { room, setRoom } = useNavbarContext();
 
 	const channel = useChannel(
 		`rooms:${roomId}`,
@@ -79,6 +75,12 @@ const PrivateRoom = ({}: Props) => {
 	return (
 		<SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
 			<Flex direction="column">
+				<Box>
+					<Heading as="h3" display="inline">
+						Topic:{' '}
+					</Heading>
+					<Text display="inline">{room.topic}</Text>
+				</Box>
 				<Button onClick={goBackToLobby} colorScheme="blue">
 					Go back to Lobby
 				</Button>
@@ -103,10 +105,11 @@ const PrivateRoom = ({}: Props) => {
 	}
 
 	function goBackToLobby() {
-		if (owner === user.username) {
+		if (room.owner === user.username) {
 			sendMessage(channel, 'private_room_closed', { room_id: roomId });
 		}
-		channel.leave();
+		channel?.leave();
+		setRoom(null);
 		navigate('/');
 	}
 

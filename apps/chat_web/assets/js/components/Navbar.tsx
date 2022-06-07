@@ -2,19 +2,20 @@ import { Container, Heading } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Outlet, useOutletContext } from 'react-router-dom';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
+import { PrivateRoom } from '../types';
 
-type ContextType = { owner: string | null; setOwner: Dispatch<SetStateAction<string>> };
+type ContextType = { room: PrivateRoom | null; setRoom: Dispatch<SetStateAction<PrivateRoom>> };
 
 const Navbar = () => {
 	const user = useCurrentUserContext();
 
-	const [owner, setOwner] = useState<string | null>(null);
+	const [room, setRoom] = useState<PrivateRoom | null>(null);
 
 	return (
 		<>
-			<NavbarHeading owner={owner} user={user} />
+			<NavbarHeading room={room} user={user} />
 			<Container border="2px" maxW="720px">
-				<Outlet context={{ owner, setOwner }} />
+				<Outlet context={{ room, setRoom }} />
 			</Container>
 		</>
 	);
@@ -24,16 +25,8 @@ export function useNavbarContext() {
 	return useOutletContext<ContextType>();
 }
 
-const NavbarHeading = ({ owner, user }) => {
-	if (owner === user.username) {
-		return (
-			<Heading as="h2" size="lg">
-				Welcome to your private room
-			</Heading>
-		);
-	}
-
-	if (owner === null) {
+const NavbarHeading = ({ room, user }) => {
+	if (room === null) {
 		return (
 			<Heading as="h2" size="lg">
 				Hello {user.username}
@@ -41,9 +34,17 @@ const NavbarHeading = ({ owner, user }) => {
 		);
 	}
 
+	if (room.owner === user.username) {
+		return (
+			<Heading as="h2" size="lg">
+				Welcome to your private room
+			</Heading>
+		);
+	}
+
 	return (
 		<Heading as="h2" size="lg">
-			In {owner}'s private room
+			In {room.owner}'s private room
 		</Heading>
 	);
 };

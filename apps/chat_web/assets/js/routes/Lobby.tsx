@@ -3,8 +3,8 @@ import React, { FormEvent, useRef, useState } from 'react';
 import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
-import { convertUserMetasToUser, isChatMsg, Msg, User, UserMetas } from '../types';
-import { Container, Flex, SimpleGrid, useToast } from '@chakra-ui/react';
+import { convertUserMetasToUser, isChatMsg, Msg, PrivateRoom, User, UserMetas } from '../types';
+import { Container, Flex, SimpleGrid, ToastId, useToast } from '@chakra-ui/react';
 import CurrentOnline from '../components/CurrentOnline';
 import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
@@ -25,11 +25,11 @@ const Lobby = () => {
 	const [topic, setTopic] = useState<string>('');
 
 	const toast = useToast();
-	const toastIdRef = useRef();
+	const toastIdRef = useRef<ToastId | undefined>();
 
 	const navigate = useNavigate();
 	const user = useCurrentUserContext();
-	const { setOwner } = useNavbarContext();
+	const { setRoom } = useNavbarContext();
 
 	const openButtonRef = useRef();
 
@@ -42,20 +42,18 @@ const Lobby = () => {
 		username: user.username,
 	});
 
-	useEventHandler(personalChannel, 'invitation', ({ owner, room_id }) => {
-		setOwner(owner);
-		toast({
+	useEventHandler(personalChannel, 'invitation', (room: PrivateRoom) => {
+		toastIdRef.current = toast({
 			position: 'bottom-right',
 			status: 'info',
 			variant: 'left-accent',
 			duration: 9000,
 			render: () => (
 				<Toast
-					owner={owner}
+					owner={room.owner}
 					onClose={closeToast}
 					onAccept={() => {
-						closeToast();
-						acceptInvite(room_id);
+						acceptInvite(room);
 					}}
 				/>
 			),
@@ -111,9 +109,10 @@ const Lobby = () => {
 		}
 	}
 
-	function acceptInvite(room_id: string) {
-		console.log('navigation to ', room_id);
-		navigate(`/rooms/${room_id}`);
+	function acceptInvite(room: PrivateRoom) {
+		setRoom(room);
+		closeToast();
+		navigate(`/rooms/${room.room_id}`);
 	}
 
 	function openInviteDrawer() {
@@ -151,16 +150,16 @@ const Lobby = () => {
 	}
 
 	async function startPrivateChat() {
-		const { room_id } = await ky
+		const room = await ky
 			.post('/api/rooms', {
 				json: { owner: user.username, invitees: invitedUsers, topic },
 			})
-			.json<{ room_id: string }>();
+			.json<PrivateRoom>();
 
-		setOwner(user.username);
-		channel.leave();
+		setRoom(room);
+		channel?.leave();
 
-		navigate(`/rooms/${room_id}`);
+		navigate(`/rooms/${room.room_id}`);
 	}
 };
 

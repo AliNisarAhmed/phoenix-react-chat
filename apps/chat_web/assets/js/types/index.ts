@@ -27,6 +27,12 @@ export interface User {
 	color: string;
 }
 
+export type PrivateRoom = {
+	owner: string;
+	room_id: string;
+	topic: string | null;
+}
+
 export function convertUserMetasToUser(list: UserMetas[]): User[] {
 	return list.map(({ metas }) => ({
 		username: metas[0].username,
