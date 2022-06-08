@@ -60,6 +60,7 @@ const PrivateRoom = ({}: Props) => {
 	useEventHandler(channel, 'kick_user', ({ username }, _channel) => {
 		if (username === user.username) {
 			_channel?.leave();
+			setRoom(null);
 			navigate('/');
 		}
 	});

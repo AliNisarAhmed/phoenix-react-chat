@@ -1,8 +1,9 @@
-import { Container, Heading } from '@chakra-ui/react';
+import { Container, Flex, Heading } from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Outlet, useOutletContext } from 'react-router-dom';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import { PrivateRoom } from '../types';
+import OnlineStatus from './OnlineStatus';
 
 type ContextType = { room: PrivateRoom | null; setRoom: Dispatch<SetStateAction<PrivateRoom>> };
 
@@ -13,7 +14,10 @@ const Navbar = () => {
 
 	return (
 		<>
-			<NavbarHeading room={room} user={user} />
+			<Flex align="center">
+				<NavbarHeading room={room} user={user} />
+				<OnlineStatus size="lg" />
+			</Flex>
 			<Container border="2px" maxW="720px">
 				<Outlet context={{ room, setRoom }} />
 			</Container>
