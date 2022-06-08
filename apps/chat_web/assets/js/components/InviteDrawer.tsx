@@ -39,6 +39,8 @@ const InviteDrawer = ({
 	topicValue,
 	topicOnChange,
 }: Props) => {
+	const [usernameFilter, setUsernameFilter] = useState<string>('');
+
 	return (
 		<>
 			<Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={btnRef} size="md">
@@ -58,8 +60,17 @@ const InviteDrawer = ({
 									aria-label=""
 								/>
 							</InputGroup>
+							<InputGroup>
+								<InputLeftAddon children="Filter" />
+								<Input
+									variant="outline"
+									value={usernameFilter}
+									onChange={(e) => setUsernameFilter(e.target.value)}
+									placeholder="Search users by username"
+								/>
+							</InputGroup>
 							<SelectUsersToInvite
-								onlineUsers={onlineUsers}
+								onlineUsers={onlineUsers.filter((user) => user.username.startsWith(usernameFilter))}
 								groupOnChange={groupOnChange}
 								groupValue={groupValue}
 							/>
