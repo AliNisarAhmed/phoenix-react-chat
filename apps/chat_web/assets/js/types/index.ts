@@ -25,18 +25,20 @@ export interface User {
 	online_at?: string;
 	username: string;
 	color: string;
+	blockedList: string[];
 }
 
 export type PrivateRoom = {
 	owner: string;
 	room_id: string;
 	topic: string | null;
-}
+};
 
 export function convertUserMetasToUser(list: UserMetas[]): User[] {
 	return list.map(({ metas }) => ({
 		username: metas[0].username,
 		online_at: metas[0].online_at,
 		color: metas[0].color,
+		blockedList: [],
 	}));
 }
