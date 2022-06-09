@@ -21,11 +21,14 @@ export interface UserMetas {
 	}[];
 }
 
+export type UserStatus = 'loggedIn' | 'loggedOut';
+
 export interface User {
 	online_at?: string;
 	username: string;
 	color: string;
 	blockedList: string[];
+	status?: UserStatus;
 }
 
 export type PrivateRoom = {

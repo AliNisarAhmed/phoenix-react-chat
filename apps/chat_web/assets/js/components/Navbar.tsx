@@ -1,9 +1,23 @@
-import { Container, Flex, Heading } from '@chakra-ui/react';
+import {
+	Button,
+	Container,
+	Flex,
+	Heading,
+	Menu,
+	MenuButton,
+	MenuDivider,
+	MenuItem,
+	MenuItemOption,
+	MenuList,
+	MenuOptionGroup,
+} from '@chakra-ui/react';
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Outlet, useOutletContext } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate, useOutletContext } from 'react-router-dom';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import { PrivateRoom } from '../types';
 import OnlineStatus from './OnlineStatus';
+import UsernameText from './UsernameText';
+import * as localStorageAPI from '../localStorage';
 
 type ContextType = { room: PrivateRoom | null; setRoom: Dispatch<SetStateAction<PrivateRoom>> };
 
@@ -12,8 +26,8 @@ const Navbar = () => {
 
 	const [room, setRoom] = useState<PrivateRoom | null>(null);
 
-	if (user === null) {
-		return <Outlet />;
+	if (user === null || user?.status === 'loggedOut') {
+		return <Outlet context={{ room, setRoom }} />;
 	}
 
 	return (
@@ -34,11 +48,25 @@ export function useNavbarContext() {
 }
 
 const NavbarHeading = ({ room, user }) => {
+	const navigate = useNavigate();
+
 	if (room === null) {
 		return (
-			<Heading as="h2" size="lg">
-				Hello {user.username}
-			</Heading>
+			<Menu>
+				<MenuButton>
+					<Heading as="h2" size="lg">
+						<UsernameText user={user} />
+					</Heading>
+				</MenuButton>
+				<MenuList>
+					<MenuOptionGroup title="Theme" type="radio" value="light">
+						<MenuItemOption value="light">Light</MenuItemOption>
+						<MenuItemOption value="dark">Dark</MenuItemOption>
+					</MenuOptionGroup>
+					<MenuDivider />
+					<MenuItem onClick={logout}>LogOut</MenuItem>
+				</MenuList>
+			</Menu>
 		);
 	}
 
@@ -55,6 +83,11 @@ const NavbarHeading = ({ room, user }) => {
 			In {room.owner}'s private room
 		</Heading>
 	);
+
+	function logout() {
+		localStorageAPI.setUserStatus('loggedOut');
+		navigate('/');
+	}
 };
 
 export default Navbar;

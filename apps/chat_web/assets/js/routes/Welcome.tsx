@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Heading, Link, Text, VStack } from '@chakra-ui/react';
 import React from 'react';
-import { key, useCurrentUserContext } from '../context/CurrentUserContext';
+import { useCurrentUserContext } from '../context/CurrentUserContext';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import generate from 'canihazusername';
 import randomcolor from '../../vendor/randomcolor';
 import { User } from '../types';
-import { writeStorage } from '@rehooks/local-storage';
+import * as localStorageAPI from '../localStorage';
 
 interface Props {}
 
@@ -31,7 +31,7 @@ const Welcome = ({}: Props) => {
 		);
 
 		function setUserAndGoToLobby(user: User) {
-			writeStorage(key, user);
+			localStorageAPI.setUser(user);
 			navigate('/lobby');
 		}
 	}
