@@ -7,6 +7,7 @@ import PrivateRoom from './routes/PrivateRoom';
 import { CurrentUserProvider } from './context/CurrentUserContext';
 import Navbar from './components/Navbar';
 import { OnlineStatusProvider } from './context/OnlineStatusProvider';
+import Welcome from './routes/Welcome';
 
 interface IProps {}
 
@@ -19,7 +20,8 @@ const App: React.FC<IProps> = (props) => {
 						<BrowserRouter>
 							<Routes>
 								<Route path="/" element={<Navbar />}>
-									<Route path="" element={<Lobby />} />
+									<Route index element={<Welcome />} />
+									<Route path="/lobby" element={<Lobby />} />
 									<Route path="/rooms/:roomId" element={<PrivateRoom />} />
 								</Route>
 							</Routes>

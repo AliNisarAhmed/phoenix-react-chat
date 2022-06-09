@@ -12,6 +12,10 @@ const Navbar = () => {
 
 	const [room, setRoom] = useState<PrivateRoom | null>(null);
 
+	if (user === null) {
+		return <Outlet />;
+	}
+
 	return (
 		<>
 			<Flex align="center">
