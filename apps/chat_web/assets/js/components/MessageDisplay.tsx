@@ -20,10 +20,10 @@ const MessageDisplay = ({ messages }: Props) => {
         border="2px"
         borderColor="red.400"
       >
-        {messages.map((msg) => {
+        {messages.map((msg, index) => {
           if (isChatMsg(msg)) {
             return (
-              <Box alignSelf="start" key={msg.text}>
+              <Box alignSelf="start" key={`${msg.text}-${index}`}>
                 <UsernameText user={msg.user} />: <span>{msg.text}</span>
               </Box>
             );

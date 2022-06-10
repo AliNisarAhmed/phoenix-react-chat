@@ -17,7 +17,9 @@ import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
 import { useNavbarContext } from '../components/Navbar';
 import Toast from '../components/Toast';
-import { useCurrentUserContext } from '../context/CurrentUserContext';
+import {
+  useCurrentUserContext,
+} from '../context/CurrentUserContext';
 import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
@@ -27,7 +29,6 @@ import {
   User,
   UserMetas,
   convertUserMetasToUser,
-  isChatMsg,
 } from '../types';
 
 const Lobby = () => {
@@ -56,23 +57,7 @@ const Lobby = () => {
     username: currentUser.username,
   });
 
-  useEventHandler(personalChannel, 'invitation', (room: PrivateRoom) => {
-    toastIdRef.current = toast({
-      position: 'bottom-right',
-      status: 'info',
-      variant: 'left-accent',
-      duration: 9000,
-      render: () => (
-        <Toast
-          owner={room.owner}
-          onClose={closeToast}
-          onAccept={() => {
-            acceptInvite(room);
-          }}
-        />
-      ),
-    });
-  });
+  useEventHandler(personalChannel, 'invitation', showInviteToast);
 
   usePresence(channel, onJoin, onLeave, onSync);
 
@@ -118,6 +103,27 @@ const Lobby = () => {
       />
     </Container>
   );
+
+  function showInviteToast(room: PrivateRoom) {
+    if (!currentUser.blockedList[room.owner]) {
+      toastIdRef.current = toast({
+        position: 'bottom-right',
+        status: 'info',
+        variant: 'left-accent',
+        duration: 9000,
+        render: () => (
+          <Toast
+            owner={room.owner}
+            onClose={closeToast}
+            onAccept={() => {
+              acceptInvite(room);
+            }}
+          />
+        ),
+      });
+    }
+  }
+
 
   function closeToast() {
     if (toastIdRef.current) {

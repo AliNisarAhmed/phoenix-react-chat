@@ -14,7 +14,7 @@ export function setUserStatus(newStatus: UserStatus) {
   writeStorage(key, { ...user, status: newStatus });
 }
 
-export function setBlockStatus(username: string, status: boolean) {
+export function setBlockedStatus(username: string, status: boolean) {
   const user: User | null = JSON.parse(localStorage.getItem(key));
 
   if (!user) {

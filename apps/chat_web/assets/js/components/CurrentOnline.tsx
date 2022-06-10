@@ -1,11 +1,10 @@
-import { Container, Flex, Heading, IconButton } from '@chakra-ui/react';
+import { Container, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
 import React from 'react';
 import { BiBlock } from 'react-icons/bi';
 import { CgUnblock } from 'react-icons/cg';
 import { GiBootKick } from 'react-icons/gi';
 
 import { useCurrentUserContext } from '../context/CurrentUserContext';
-import * as localStorageAPI from '../localStorage';
 import { User } from '../types';
 import { useNavbarContext } from './Navbar';
 import OnlineStatus from './OnlineStatus';
@@ -19,7 +18,7 @@ interface Props {
 
 const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
   const { room } = useNavbarContext();
-  const { currentUser } = useCurrentUserContext();
+  const { currentUser, setBlockedStatus } = useCurrentUserContext();
 
   return (
     <Container flexGrow={1}>
@@ -45,18 +44,14 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
               isBlocked ? (
                 <IconButton
                   aria-label={`block user ${user.username}`}
-                  as={CgUnblock}
-                  onClick={() =>
-                    localStorageAPI.setBlockStatus(user.username, false)
-                  }
+                  icon={<Icon as={CgUnblock} />}
+                  onClick={() => setBlockedStatus(user.username, false)}
                 />
               ) : (
                 <IconButton
                   aria-label={`unblock user ${user.username}`}
-                  as={BiBlock}
-                  onClick={() =>
-                    localStorageAPI.setBlockStatus(user.username, true)
-                  }
+                  icon={<Icon as={BiBlock} />}
+                  onClick={() => setBlockedStatus(user.username, true)}
                 />
               )
             ) : null}

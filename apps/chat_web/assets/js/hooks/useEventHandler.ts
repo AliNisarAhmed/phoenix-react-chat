@@ -7,6 +7,7 @@ export function useEventHandler(
   handler: any,
 ) {
   const handlerFunc = useRef(handler);
+  handlerFunc.current = handler;
 
   useEffect(() => {
     if (channel) {
