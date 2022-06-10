@@ -27,7 +27,7 @@ export interface User {
   online_at?: string;
   username: string;
   color: string;
-  blockedList: string[];
+  blockedList: Record<string, boolean>;
   status?: UserStatus;
 }
 
@@ -42,6 +42,6 @@ export function convertUserMetasToUser(list: UserMetas[]): User[] {
     username: metas[0].username,
     online_at: metas[0].online_at,
     color: metas[0].color,
-    blockedList: [],
+    blockedList: {},
   }));
 }

@@ -1,7 +1,11 @@
 import { Container, Flex, Heading, IconButton } from '@chakra-ui/react';
 import React from 'react';
+import { BiBlock } from 'react-icons/bi';
+import { CgUnblock } from 'react-icons/cg';
 import { GiBootKick } from 'react-icons/gi';
 
+import { useCurrentUserContext } from '../context/CurrentUserContext';
+import * as localStorageAPI from '../localStorage';
 import { User } from '../types';
 import { useNavbarContext } from './Navbar';
 import OnlineStatus from './OnlineStatus';
@@ -10,36 +14,55 @@ import UsernameText from './UsernameText';
 interface Props {
   onlineUsers: User[];
   privateRoom?: boolean;
-  currentUser: User;
   kickUser?: (username: string) => void;
 }
 
-const CurrentOnline = ({
-  onlineUsers,
-  privateRoom,
-  currentUser,
-  kickUser,
-}: Props) => {
+const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
   const { room } = useNavbarContext();
+  const { currentUser } = useCurrentUserContext();
 
   return (
     <Container flexGrow={1}>
       <Heading as="h6" size="sm" pb="0.5rem">
         Online right now
       </Heading>
-      {onlineUsers.map((user) => (
-        <Flex direction="row" align="center" gap="5px" key={user.username}>
-          <OnlineStatus size="sm" on />
-          <UsernameText user={user} />
-          {privateRoom && room.owner === currentUser.username && (
-            <IconButton
-              aria-label={`kick user ${user.username}`}
-              as={GiBootKick}
-              onClick={() => kickUser?.(user.username)}
-            />
-          )}
-        </Flex>
-      ))}
+      {onlineUsers.map((user) => {
+        const isBlocked = currentUser.blockedList[user.username];
+        console.log('isBlocked', isBlocked);
+
+        return (
+          <Flex direction="row" align="center" gap="5px" key={user.username}>
+            <OnlineStatus size="sm" on />
+            <UsernameText user={user} isBlocked={isBlocked} />
+            {privateRoom && room.owner === currentUser.username && (
+              <IconButton
+                aria-label={`kick user ${user.username}`}
+                as={GiBootKick}
+                onClick={() => kickUser?.(user.username)}
+              />
+            )}
+            {!privateRoom && currentUser.username !== user.username ? (
+              isBlocked ? (
+                <IconButton
+                  aria-label={`block user ${user.username}`}
+                  as={CgUnblock}
+                  onClick={() =>
+                    localStorageAPI.setBlockStatus(user.username, false)
+                  }
+                />
+              ) : (
+                <IconButton
+                  aria-label={`unblock user ${user.username}`}
+                  as={BiBlock}
+                  onClick={() =>
+                    localStorageAPI.setBlockStatus(user.username, true)
+                  }
+                />
+              )
+            ) : null}
+          </Flex>
+        );
+      })}
     </Container>
   );
 };

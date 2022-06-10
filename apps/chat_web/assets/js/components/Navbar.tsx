@@ -31,18 +31,18 @@ type ContextType = {
 };
 
 const Navbar = () => {
-  const user = useCurrentUserContext();
+  const { currentUser } = useCurrentUserContext();
 
   const [room, setRoom] = useState<PrivateRoom | null>(null);
 
-  if (user === null || user?.status === 'loggedOut') {
+  if (currentUser === null || currentUser?.status === 'loggedOut') {
     return <Outlet context={{ room, setRoom }} />;
   }
 
   return (
     <>
       <Flex align="center">
-        <NavbarHeading room={room} user={user} />
+        <NavbarHeading room={room} currentUser={currentUser} />
         <OnlineStatus size="lg" />
       </Flex>
       <Container border="2px" maxW="720px">
@@ -56,7 +56,7 @@ export function useNavbarContext() {
   return useOutletContext<ContextType>();
 }
 
-const NavbarHeading = ({ room, user }) => {
+const NavbarHeading = ({ room, currentUser }) => {
   const navigate = useNavigate();
 
   if (room === null) {
@@ -64,7 +64,7 @@ const NavbarHeading = ({ room, user }) => {
       <Menu>
         <MenuButton>
           <Heading as="h2" size="lg">
-            <UsernameText user={user} />
+            <UsernameText user={currentUser} />
           </Heading>
         </MenuButton>
         <MenuList>
@@ -79,7 +79,7 @@ const NavbarHeading = ({ room, user }) => {
     );
   }
 
-  if (room.owner === user.username) {
+  if (room.owner === currentUser.username) {
     return (
       <Heading as="h2" size="lg">
         Welcome to your private room

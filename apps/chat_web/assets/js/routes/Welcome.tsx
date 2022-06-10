@@ -20,9 +20,9 @@ interface Props {}
 
 const Welcome = ({}: Props) => {
   const navigate = useNavigate();
-  const user = useCurrentUserContext();
+  const { currentUser } = useCurrentUserContext();
 
-  if (user === null) {
+  if (currentUser === null) {
     return (
       <Box>
         <Text>
@@ -54,7 +54,7 @@ const Welcome = ({}: Props) => {
 
   return (
     <Flex>
-      <Heading as="h3">Welcome back {user.username},</Heading>
+      <Heading as="h3">Welcome back {currentUser.username},</Heading>
       <Link as={RouterLink} to="/lobby">
         Click here to continue to the app
       </Link>
@@ -66,7 +66,7 @@ function generateRandomUser() {
   return {
     username: generate(),
     color: randomcolor(),
-    blockedList: [],
+    blockedList: {},
   };
 }
 

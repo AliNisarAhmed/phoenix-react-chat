@@ -1,15 +1,24 @@
+import useLocalStorage from '@rehooks/local-storage';
 import React, { createContext, useContext } from 'react';
 
-import * as localStorageAPI from '../localStorage';
+import { key } from '../localStorage';
 import { User } from '../types';
 
-const CurrentUserContext = createContext<User | null>(null);
+type CurrentUserContextType = {
+  currentUser: User | null;
+  setCurrentUser: (user: User) => void;
+};
+
+const CurrentUserContext = createContext<CurrentUserContextType>({
+  currentUser: null,
+  setCurrentUser: (_) => {},
+});
 
 export const CurrentUserProvider = ({ children }) => {
-  const [user] = localStorageAPI.getUserData();
+  const [currentUser, setCurrentUser] = useLocalStorage(key, null);
 
   return (
-    <CurrentUserContext.Provider value={user}>
+    <CurrentUserContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </CurrentUserContext.Provider>
   );

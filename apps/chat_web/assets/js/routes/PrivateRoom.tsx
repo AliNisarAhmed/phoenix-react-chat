@@ -34,14 +34,14 @@ const PrivateRoom = ({}: Props) => {
   const [messageText, setMessageText] = useState<string>('');
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
 
-  const user = useCurrentUserContext();
+  const { currentUser } = useCurrentUserContext();
   const { room, setRoom } = useNavbarContext();
 
   const channel = useChannel(
     `rooms:${roomId}`,
     {
-      username: user.username,
-      color: user.color,
+      username: currentUser.username,
+      color: currentUser.color,
     },
     (resp) => {
       console.log('successfully joined channel');
@@ -68,7 +68,7 @@ const PrivateRoom = ({}: Props) => {
   });
 
   useEventHandler(channel, 'kick_user', ({ username }, _channel) => {
-    if (username === user.username) {
+    if (username === currentUser.username) {
       _channel?.leave();
       setRoom(null);
       navigate('/');
@@ -103,9 +103,11 @@ const PrivateRoom = ({}: Props) => {
         />
       </Flex>
       <CurrentOnline
-        onlineUsers={onlineUsers.filter((u) => u.username !== user.username)}
+        onlineUsers={onlineUsers.filter(
+          (u) => u.username !== currentUser.username,
+        )}
         privateRoom
-        currentUser={user}
+        currentUser={currentUser}
         kickUser={kickUser}
       />
     </SimpleGrid>
@@ -116,7 +118,7 @@ const PrivateRoom = ({}: Props) => {
   }
 
   function goBackToLobby() {
-    if (room.owner === user.username) {
+    if (room.owner === currentUser.username) {
       sendMessage(channel, 'private_room_closed', { room_id: roomId });
     }
     channel?.leave();
@@ -125,9 +127,9 @@ const PrivateRoom = ({}: Props) => {
   }
 
   function onJoin(key, currentPresence) {
-    if (currentPresence && user.username === key) {
+    if (currentPresence && currentUser.username === key) {
       setMessages((prev) => [...prev, { text: `you joined the chat...` }]);
-    } else if (currentPresence || user.username !== key) {
+    } else if (currentPresence || currentUser.username !== key) {
       setMessages((prev) => [...prev, { text: `${key} joined the chat...` }]);
     }
   }
@@ -144,7 +146,10 @@ const PrivateRoom = ({}: Props) => {
   function submitMessage(e: FormEvent) {
     e.preventDefault();
     console.log('submitting a message', channel);
-    sendMessage(channel, 'submit_message', { text: messageText, user });
+    sendMessage(channel, 'submit_message', {
+      text: messageText,
+      user: currentUser,
+    });
     setMessageText('');
   }
 };

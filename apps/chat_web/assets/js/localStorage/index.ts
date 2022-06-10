@@ -1,13 +1,8 @@
-import useLocalStorage, { writeStorage } from '@rehooks/local-storage';
-import { LocalStorageReturnValue } from '@rehooks/local-storage/lib/use-localstorage';
+import { writeStorage } from '@rehooks/local-storage';
 
 import { User, UserStatus } from '../types';
 
-const key = '118359056996_USER_DATA';
-
-export function getUserData(): LocalStorageReturnValue<User | null> {
-  return useLocalStorage(key, null);
-}
+export const key = '118359056996_USER_DATA';
 
 export function setUserStatus(newStatus: UserStatus) {
   const user: User | null = JSON.parse(localStorage.getItem(key));
@@ -17,6 +12,21 @@ export function setUserStatus(newStatus: UserStatus) {
   }
 
   writeStorage(key, { ...user, status: newStatus });
+}
+
+export function setBlockStatus(username: string, status: boolean) {
+  const user: User | null = JSON.parse(localStorage.getItem(key));
+
+  if (!user) {
+    throw new Error('cannot modify null user');
+  }
+
+  const updatedUser: User = {
+    ...user,
+    blockedList: { ...user.blockedList, [username]: status },
+  };
+
+  writeStorage(key, updatedUser);
 }
 
 export function setUser(user: User) {

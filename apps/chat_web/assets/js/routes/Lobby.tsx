@@ -42,18 +42,18 @@ const Lobby = () => {
   const toastIdRef = useRef<ToastId | undefined>();
 
   const navigate = useNavigate();
-  const user = useCurrentUserContext();
+  const { currentUser } = useCurrentUserContext();
   const { setRoom } = useNavbarContext();
 
   const openButtonRef = useRef();
 
   const channel: Channel = useChannel('rooms:lobby', {
-    username: user.username,
-    color: user.color,
+    username: currentUser.username,
+    color: currentUser.color,
   });
 
-  const personalChannel = useChannel(`users:${user.username}`, {
-    username: user.username,
+  const personalChannel = useChannel(`users:${currentUser.username}`, {
+    username: currentUser.username,
   });
 
   useEventHandler(personalChannel, 'invitation', (room: PrivateRoom) => {
@@ -98,7 +98,7 @@ const Lobby = () => {
         </Flex>
         <Container px="1rem" py="0.5rem">
           <Flex direction="column" justify="space-between" h="100%">
-            <CurrentOnline onlineUsers={onlineUsers} currentUser={user} />
+            <CurrentOnline onlineUsers={onlineUsers} />
             <ActionButton onClick={openInviteDrawer} ref={openButtonRef} />
           </Flex>
         </Container>
@@ -107,7 +107,9 @@ const Lobby = () => {
         isOpen={inviteDrawerOpen}
         onClose={closeInviteDrawer}
         btnRef={openButtonRef}
-        onlineUsers={onlineUsers.filter((u) => u.username !== user.username)}
+        onlineUsers={onlineUsers.filter(
+          (u) => u.username !== currentUser.username,
+        )}
         drawerAction={startPrivateChat}
         groupValue={invitedUsers}
         groupOnChange={(v) => setInvitedUsers(v)}
@@ -141,9 +143,9 @@ const Lobby = () => {
 
   function onJoin(key, currentPresence) {
     console.log('onJoin called');
-    if (currentPresence && user.username === key) {
+    if (currentPresence && currentUser.username === key) {
       setMessages((prev) => [...prev, { text: `you joined the chat...` }]);
-    } else if (currentPresence || user.username !== key) {
+    } else if (currentPresence || currentUser.username !== key) {
       setMessages((prev) => [...prev, { text: `${key} joined the chat...` }]);
     }
   }
@@ -159,14 +161,17 @@ const Lobby = () => {
   }
   function submitMessage(e: FormEvent) {
     e.preventDefault();
-    sendMessage(channel, 'submit_message', { text: messageText, user });
+    sendMessage(channel, 'submit_message', {
+      text: messageText,
+      user: currentUser,
+    });
     setMessageText('');
   }
 
   async function startPrivateChat() {
     const room = await ky
       .post('/api/rooms', {
-        json: { owner: user.username, invitees: invitedUsers, topic },
+        json: { owner: currentUser.username, invitees: invitedUsers, topic },
       })
       .json<PrivateRoom>();
 
