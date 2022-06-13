@@ -17,9 +17,7 @@ import MessageDisplay from '../components/MessageDisplay';
 import MessageSubmit from '../components/MessageSubmit';
 import { useNavbarContext } from '../components/Navbar';
 import Toast from '../components/Toast';
-import {
-  useCurrentUserContext,
-} from '../context/CurrentUserContext';
+import { useCurrentUserContext } from '../context/CurrentUserContext';
 import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
@@ -124,7 +122,6 @@ const Lobby = () => {
     }
   }
 
-
   function closeToast() {
     if (toastIdRef.current) {
       toast.close(toastIdRef.current);
@@ -165,6 +162,7 @@ const Lobby = () => {
     console.log('On Sync called');
     setOnlineUsers(convertUserMetasToUser(list));
   }
+
   function submitMessage(e: FormEvent) {
     e.preventDefault();
     sendMessage(channel, 'submit_message', {
@@ -184,7 +182,10 @@ const Lobby = () => {
     setRoom(room);
     channel?.leave();
 
-    navigate(`/rooms/${room.room_id}`);
+    navigate(`/rooms/${room.room_id}`, {
+      state: { fromLobby: true },
+      replace: true,
+    });
   }
 };
 

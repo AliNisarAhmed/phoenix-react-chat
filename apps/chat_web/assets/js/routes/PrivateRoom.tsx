@@ -107,7 +107,6 @@ const PrivateRoom = ({}: Props) => {
           (u) => u.username !== currentUser.username,
         )}
         privateRoom
-        currentUser={currentUser}
         kickUser={kickUser}
       />
     </SimpleGrid>

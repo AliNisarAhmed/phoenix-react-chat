@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   Flex,
@@ -11,12 +12,14 @@ import {
   MenuList,
   MenuOptionGroup,
 } from '@chakra-ui/react';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Navigate,
   Outlet,
+  useLocation,
   useNavigate,
   useOutletContext,
+  useParams,
 } from 'react-router-dom';
 
 import { useCurrentUserContext } from '../context/CurrentUserContext';
@@ -24,6 +27,10 @@ import * as localStorageAPI from '../localStorage';
 import { PrivateRoom } from '../types';
 import OnlineStatus from './OnlineStatus';
 import UsernameText from './UsernameText';
+
+interface LocationState {
+  fromLobby?: boolean;
+}
 
 type ContextType = {
   room: PrivateRoom | null;
@@ -34,6 +41,31 @@ const Navbar = () => {
   const { currentUser } = useCurrentUserContext();
 
   const [room, setRoom] = useState<PrivateRoom | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const location = useLocation();
+  const { fromLobby } = (location.state as LocationState) ?? {};
+  const { roomId } = useParams();
+
+  useEffect(() => {
+    if (fromLobby) {
+      setRoom({
+        owner: currentUser.username,
+        room_id: roomId,
+        topic: 'custom topic',
+      });
+    }
+    setIsLoading(false);
+  }, [location]);
+
+  if (isLoading) {
+    // TODO: render a full page loader here
+    return (
+      <Box h="100vh" w="100vw" border="1px solid red">
+        <Heading as="h1">Loading...</Heading>
+      </Box>
+    );
+  }
 
   if (currentUser === null || currentUser?.status === 'loggedOut') {
     return <Outlet context={{ room, setRoom }} />;
