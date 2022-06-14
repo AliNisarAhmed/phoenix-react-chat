@@ -12,6 +12,7 @@ import {
   MenuList,
   MenuOptionGroup,
 } from '@chakra-ui/react';
+import ky from 'ky';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Navigate,
@@ -39,6 +40,10 @@ type ContextType = {
 
 const Navbar = () => {
   const { currentUser } = useCurrentUserContext();
+  console.log(
+    '🚀 ~ file: Navbar.tsx ~ line 43 ~ Navbar ~ currentUser',
+    currentUser,
+  );
 
   const [room, setRoom] = useState<PrivateRoom | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -46,16 +51,27 @@ const Navbar = () => {
   const location = useLocation();
   const { fromLobby } = (location.state as LocationState) ?? {};
   const { roomId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (fromLobby) {
-      setRoom({
-        owner: currentUser.username,
-        room_id: roomId,
-        topic: 'custom topic',
-      });
+    if (currentUser && !fromLobby) {
+      fetchRoom();
+
+      async function fetchRoom() {
+        try {
+          const room = await ky
+            .get(`/api/rooms/${roomId}?username=${currentUser.username}`, {})
+            .json<PrivateRoom>();
+          setRoom(room);
+          setIsLoading(false);
+        } catch (error) {
+          navigate('/');
+          console.log('error', error);
+        }
+      }
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, [location]);
 
   if (isLoading) {
