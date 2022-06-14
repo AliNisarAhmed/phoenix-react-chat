@@ -17,6 +17,7 @@ defmodule ChatWeb.Router do
   scope "/api", ChatWeb do
     pipe_through :api
 
+    get "/rooms/:room_id", PrivateRoomController, :index
     post "/rooms", PrivateRoomController, :create
   end
 

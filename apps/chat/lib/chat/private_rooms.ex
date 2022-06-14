@@ -4,6 +4,12 @@ defmodule Chat.PrivateRooms do
   alias Chat.Repo
   alias Chat.PrivateRooms.PrivateRoom
 
+  def get_private_room(room_id_string) do
+    with {:ok, room_id} <- Ecto.UUID.cast(room_id_string) do
+      Repo.get_by(PrivateRoom, room_id: room_id)
+    end
+  end
+
   def create_private_room(attrs \\ %{}) do
     attrs = Map.put(attrs, "room_id", Ecto.UUID.generate())
 
@@ -31,18 +37,22 @@ defmodule Chat.PrivateRooms do
 
       changeset = PrivateRoom.changeset(room, %{invitees: new_invite_list})
 
-      IO.inspect(changeset, label: "UPDATE ROOM CHANGESET")
-
       Repo.update!(changeset)
     end
   end
 
   def is_user_invited?(username, room_id_string) do
+    IO.inspect(username, label: "Inside is_user_invited?")
+
     with {:ok, room_id} <- Ecto.UUID.cast(room_id_string),
          room when not is_nil(room) <- Repo.get_by(PrivateRoom, room_id: room_id) do
-      room.owner == username or Enum.member?(room.invitees, username)
+      is_invited?(username, room)
     else
       _ -> false
     end
+  end
+
+  def is_invited?(username, room) do
+    room.owner == username or Enum.member?(room.invitees, username)
   end
 end

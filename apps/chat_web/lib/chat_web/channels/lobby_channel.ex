@@ -13,7 +13,6 @@ defmodule ChatWeb.LobbyChannel do
     username = params["username"]
 
     if PrivateRooms.is_user_invited?(username, room_id) do
-      IO.inspect(params, label: "Private Room Params: ")
       send(self(), :after_join_private_room)
       {:ok, assign(socket, username: username, color: params["color"])}
     else
@@ -21,7 +20,7 @@ defmodule ChatWeb.LobbyChannel do
     end
   end
 
-  def join("users:" <> username, _params, socket) do
+  def join("users:" <> _username, _params, socket) do
     IO.inspect(socket.assigns, label: "JOINING OWN CHANNEL")
     {:ok, socket}
   end

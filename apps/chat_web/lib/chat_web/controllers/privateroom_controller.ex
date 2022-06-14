@@ -3,6 +3,18 @@ defmodule ChatWeb.PrivateRoomController do
 
   alias Chat.PrivateRooms
 
+  action_fallback ChatWeb.FallbackController
+
+  def index(conn, %{"room_id" => room_id, "username" => username}) do
+    with room <- PrivateRooms.get_private_room(room_id),
+         true <- PrivateRooms.is_invited?(username, room) do
+      render(conn, "index.json", %{room: room})
+    else
+      false -> {:error, :unauthorized}
+      _ -> {:error, :not_found}
+    end
+  end
+
   def create(conn, params) do
     with {:ok, room} <- PrivateRooms.create_private_room(params) do
       IO.inspect(room, label: "CREATED ROOM")
