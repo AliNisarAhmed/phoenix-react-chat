@@ -11,7 +11,10 @@ defmodule Chat.PrivateRooms do
   end
 
   def create_private_room(attrs \\ %{}) do
-    attrs = Map.put(attrs, "room_id", Ecto.UUID.generate())
+    attrs =
+      attrs
+      |> Map.put("room_id", Ecto.UUID.generate())
+      |> Map.put("shareable_code", generate_code())
 
     resp =
       %PrivateRoom{}
@@ -54,5 +57,12 @@ defmodule Chat.PrivateRooms do
 
   def is_invited?(username, room) do
     room.owner == username or Enum.member?(room.invitees, username)
+  end
+
+  defp generate_code(length \\ 16) do
+    length
+    |> :crypto.strong_rand_bytes()
+    |> Base.encode64()
+    |> binary_part(0, length)
   end
 end

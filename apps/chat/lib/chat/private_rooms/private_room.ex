@@ -7,6 +7,7 @@ defmodule Chat.PrivateRooms.PrivateRoom do
     field :room_id, Ecto.UUID
     field :invitees, {:array, :string}
     field :topic, :string
+    field :shareable_code, :string
 
     timestamps()
   end
@@ -14,7 +15,7 @@ defmodule Chat.PrivateRooms.PrivateRoom do
   @doc false
   def changeset(private_room, attrs) do
     private_room
-    |> cast(attrs, [:owner, :room_id, :invitees, :topic])
-    |> validate_required([:owner, :room_id])
+    |> cast(attrs, [:owner, :room_id, :invitees, :topic, :shareable_code])
+    |> validate_required([:owner, :room_id, :shareable_code])
   end
 end
