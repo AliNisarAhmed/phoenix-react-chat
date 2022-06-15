@@ -35,6 +35,7 @@ export type PrivateRoom = {
   owner: string;
   room_id: string;
   topic: string | null;
+  shareable_code: string;
 };
 
 export function convertUserMetasToUser(list: UserMetas[]): User[] {

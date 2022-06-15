@@ -52,9 +52,10 @@ const Navbar = () => {
   const { fromLobby } = (location.state as LocationState) ?? {};
   const { roomId } = useParams();
   const navigate = useNavigate();
+      console.log("🚀 ~ file: Navbar.tsx ~ line 58 ~ useEffect ~ fromLobby", fromLobby)
 
   useEffect(() => {
-    if (currentUser && !fromLobby) {
+    if (currentUser && roomId && !room) {
       fetchRoom();
 
       async function fetchRoom() {
@@ -65,7 +66,6 @@ const Navbar = () => {
           setRoom(room);
           setIsLoading(false);
         } catch (error) {
-          navigate('/');
           console.log('error', error);
         }
       }

@@ -7,6 +7,7 @@ import {
   SimpleGrid,
   Spinner,
   Text,
+  useClipboard,
 } from '@chakra-ui/react';
 import React, { FormEvent, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -36,6 +37,10 @@ const PrivateRoom = ({}: Props) => {
 
   const { currentUser } = useCurrentUserContext();
   const { room, setRoom } = useNavbarContext();
+
+  const sharedUrl = `http://localhost:4000/rooms/invite/${room?.shareable_code}`;
+
+  const { hasCopied, onCopy } = useClipboard(sharedUrl);
 
   const channel = useChannel(
     `rooms:${roomId}`,
@@ -90,7 +95,7 @@ const PrivateRoom = ({}: Props) => {
           <Heading as="h3" display="inline">
             Topic:{' '}
           </Heading>
-          <Text display="inline">{room.topic}</Text>
+          <Text display="inline">{room?.topic}</Text>
         </Box>
         <Button onClick={goBackToLobby} colorScheme="blue">
           Go back to Lobby
@@ -102,13 +107,21 @@ const PrivateRoom = ({}: Props) => {
           onChange={(e) => setMessageText(e.target.value)}
         />
       </Flex>
-      <CurrentOnline
-        onlineUsers={onlineUsers.filter(
-          (u) => u.username !== currentUser.username,
-        )}
-        privateRoom
-        kickUser={kickUser}
-      />
+      <Flex direction="column">
+        <CurrentOnline
+          onlineUsers={onlineUsers.filter(
+            (u) => u.username !== currentUser.username,
+          )}
+          privateRoom
+          kickUser={kickUser}
+        />
+        <Flex>
+          <input value={`.../invite/${room.shareable_code}`} readOnly />
+          <Button onClick={onCopy} ml={2}>
+            {hasCopied ? 'Copied!' : 'Copy Link'}
+          </Button>
+        </Flex>
+      </Flex>
     </SimpleGrid>
   );
 

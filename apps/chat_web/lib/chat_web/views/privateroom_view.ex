@@ -6,7 +6,7 @@ defmodule ChatWeb.PrivateRoomView do
       room_id: room.room_id,
       owner: room.owner,
       topic: room.topic,
-      sharable_code: room.shareable_code
+      shareable_code: room.shareable_code
     }
   end
 
