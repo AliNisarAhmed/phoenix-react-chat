@@ -19,6 +19,7 @@ defmodule ChatWeb.Router do
 
     get "/rooms/:room_id", PrivateRoomController, :index
     post "/rooms", PrivateRoomController, :create
+    post "/rooms/invite", PrivateRoomController, :accept_invite
   end
 
   scope "/", ChatWeb do

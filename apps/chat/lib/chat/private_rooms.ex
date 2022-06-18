@@ -10,6 +10,17 @@ defmodule Chat.PrivateRooms do
     end
   end
 
+  def get_room_by_code(invite_code) do
+    Repo.get_by(PrivateRoom, shareable_code: invite_code)
+  end
+
+  def add_user_to_room(room, username) do
+    room
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_change(:invitees, [username | room.invitees ])
+    |> Repo.update()
+  end
+
   def create_private_room(attrs \\ %{}) do
     attrs =
       attrs
@@ -62,7 +73,7 @@ defmodule Chat.PrivateRooms do
   defp generate_code(length \\ 16) do
     length
     |> :crypto.strong_rand_bytes()
-    |> Base.encode64()
+    |> Base.url_encode64()
     |> binary_part(0, length)
   end
 end

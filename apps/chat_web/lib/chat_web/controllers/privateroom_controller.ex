@@ -30,4 +30,12 @@ defmodule ChatWeb.PrivateRoomController do
       render(conn, "create.json", %{room: room})
     end
   end
+
+  def accept_invite(conn, %{"username" => username, "invite_code" => invite_code}) do
+    with room <- PrivateRooms.get_room_by_code(invite_code) do
+      PrivateRooms.add_user_to_room(room, username)
+
+      render(conn, "create.json", %{room: room})
+    end
+  end
 end
