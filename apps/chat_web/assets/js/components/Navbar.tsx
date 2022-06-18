@@ -47,14 +47,20 @@ const Navbar = () => {
 
   const [room, setRoom] = useState<PrivateRoom | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
   const { fromLobby } = (location.state as LocationState) ?? {};
   const { roomId } = useParams();
   const navigate = useNavigate();
-      console.log("🚀 ~ file: Navbar.tsx ~ line 58 ~ useEffect ~ fromLobby", fromLobby)
+  console.log(
+    '🚀 ~ file: Navbar.tsx ~ line 58 ~ useEffect ~ fromLobby',
+    fromLobby,
+  );
 
   useEffect(() => {
+    let timer;
+
     if (currentUser && roomId && !room) {
       fetchRoom();
 
@@ -66,7 +72,15 @@ const Navbar = () => {
           setRoom(room);
           setIsLoading(false);
         } catch (error) {
-          console.log('error', error);
+          if (error?.response?.status === 401) {
+            setError('You are not invited to this room... going back to lobby');
+          } else if (error?.response.status === 404) {
+            setError('Room not found, going back to lobby');
+          }
+          timer = setTimeout(() => {
+            navigate('/lobby');
+            setError(null);
+          }, 1500);
         }
       }
     } else {
@@ -81,6 +95,10 @@ const Navbar = () => {
         <Heading as="h1">Loading...</Heading>
       </Box>
     );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   if (currentUser === null || currentUser?.status === 'loggedOut') {
