@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import { CurrentUserProvider } from './context/CurrentUserContext';
 import { OnlineStatusProvider } from './context/OnlineStatusProvider';
 import { SocketProvider } from './context/SocketContext';
+import Invite from './routes/Invite';
 import Lobby from './routes/Lobby';
 import PrivateRoom from './routes/PrivateRoom';
 import Welcome from './routes/Welcome';
@@ -24,6 +25,10 @@ const App: React.FC<IProps> = (props) => {
                   <Route index element={<Welcome />} />
                   <Route path="/lobby" element={<Lobby />} />
                   <Route path="/rooms/:roomId" element={<PrivateRoom />} />
+                  <Route
+                    path="/rooms/invite/:inviteCode"
+                    element={<Invite />}
+                  />
                 </Route>
               </Routes>
             </BrowserRouter>

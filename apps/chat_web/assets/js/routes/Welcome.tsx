@@ -1,17 +1,12 @@
 import {
-  Box,
-  Button,
   Flex,
   Heading,
   Link,
-  Text,
-  VStack,
 } from '@chakra-ui/react';
-import generate from 'canihazusername';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-import randomcolor from '../../vendor/randomcolor';
+import UsernameSelection from '../components/UsernameSelection';
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import * as localStorageAPI from '../localStorage';
 import { User } from '../types';
@@ -23,28 +18,7 @@ const Welcome = ({}: Props) => {
   const { currentUser } = useCurrentUserContext();
 
   if (currentUser === null) {
-    return (
-      <Box>
-        <Text>
-          Hi, Welcome to the chat app, Please choose a username below to
-          continue
-        </Text>
-        <VStack>
-          {[
-            generateRandomUser(),
-            generateRandomUser(),
-            generateRandomUser(),
-          ].map((u) => (
-            <Button onClick={() => setUserAndGoToLobby(u)}>
-              <Flex direction="column">
-                <Text>{u.username}</Text>
-                <input type="color" value={u.color} />
-              </Flex>
-            </Button>
-          ))}
-        </VStack>
-      </Box>
-    );
+    return <UsernameSelection onUsernameSelect={setUserAndGoToLobby} />;
 
     function setUserAndGoToLobby(user: User) {
       localStorageAPI.setUser(user);
@@ -61,13 +35,5 @@ const Welcome = ({}: Props) => {
     </Flex>
   );
 };
-
-function generateRandomUser() {
-  return {
-    username: generate(),
-    color: randomcolor(),
-    blockedList: {},
-  };
-}
 
 export default Welcome;
