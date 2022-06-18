@@ -32,10 +32,15 @@ defmodule ChatWeb.PrivateRoomController do
   end
 
   def accept_invite(conn, %{"username" => username, "invite_code" => invite_code}) do
-    with room <- PrivateRooms.get_room_by_code(invite_code) do
-      PrivateRooms.add_user_to_room(room, username)
+    with room when not is_nil(room) <- PrivateRooms.get_room_by_code(invite_code) do
+      if not Enum.member?(room.invitees, username) do
+        PrivateRooms.add_user_to_room(room, username)
+      end
 
       render(conn, "create.json", %{room: room})
+    else
+      nil -> {:error, :not_found}
+      _ -> {:error, :unknown}
     end
   end
 end
