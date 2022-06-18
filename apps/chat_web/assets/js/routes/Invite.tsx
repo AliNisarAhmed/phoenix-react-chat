@@ -1,5 +1,5 @@
 import ky from 'ky';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useNavbarContext } from '../components/Navbar';
@@ -18,11 +18,51 @@ const Invite = ({}: Props) => {
 
   const { setRoom } = useNavbarContext();
 
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    let timer;
+    if (currentUser) {
+      checkInvite(currentUser);
+    } else {
+      setIsLoading(false);
+    }
+
+    async function checkInvite(user: User) {
+      try {
+        await addUserToRoom(user);
+      } catch (error) {
+        console.log('error :>> ', { error });
+        if (error.response.status === 404) {
+          setError('Room not found, taking you to lobby');
+        } else {
+          setError("An error occurred while joining, going to Lobby instead...")
+        }
+        timer = setTimeout(() => {
+          navigate('/lobby');
+        }, 1500);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <div>Checking Invite Link...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   if (!currentUser) {
     return (
       <div>
         <UsernameSelection
-          onUsernameSelect={async (user) => await addUserToRoom(user)}
+          onUsernameSelect={async (user) => await setUserInStorage(user)}
         />
       </div>
     );
@@ -34,8 +74,16 @@ const Invite = ({}: Props) => {
 
   return <div>User set, loading...</div>;
 
-  async function addUserToRoom(user: User) {
+  function navigateToRoom(room: PrivateRoom) {
+    navigate(`/rooms/${room.room_id}`);
+  }
+
+  async function setUserInStorage(user: User) {
     localStorageAPI.setUser(user);
+    await addUserToRoom(user);
+  }
+
+  async function addUserToRoom(user: User) {
     const room = await ky
       .post(`/api/rooms/invite`, {
         json: {
@@ -45,8 +93,7 @@ const Invite = ({}: Props) => {
       })
       .json<PrivateRoom>();
     setRoom(room);
-
-    navigate(`/rooms/${room.room_id}`);
+    navigateToRoom(room);
   }
 };
 
