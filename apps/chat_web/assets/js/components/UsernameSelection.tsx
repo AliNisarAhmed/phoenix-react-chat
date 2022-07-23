@@ -20,7 +20,9 @@ const UsernameSelection = ({ onUsernameSelect }: Props) => {
             <Button onClick={() => onUsernameSelect(u)}>
               <Flex direction="column">
                 <Text>{u.username}</Text>
-                <input type="color" value={u.color} />
+                <Box color={u.color} bg={u.color} height="1rem" width="2rem"/>
+
+                {/* <input type="color" value={u.color} /> */}
               </Flex>
             </Button>
           ),

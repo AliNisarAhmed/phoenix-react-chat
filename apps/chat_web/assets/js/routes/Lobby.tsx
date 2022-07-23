@@ -69,8 +69,8 @@ const Lobby = () => {
   });
 
   return (
-    <Container border="2px" maxW="720px">
-      <SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
+    <Container maxW="980px" bg='dark.bgSecondary'>
+      <SimpleGrid columns={2} spacing={10} templateColumns="3fr 1fr">
         <Flex direction="column">
           <MessageDisplay messages={messages} />
           <MessageSubmit
@@ -183,7 +183,6 @@ const Lobby = () => {
     channel?.leave();
 
     navigate(`/rooms/${room.room_id}`, {
-      state: { fromLobby: true },
       replace: true,
     });
   }

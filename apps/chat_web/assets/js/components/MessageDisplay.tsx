@@ -16,22 +16,29 @@ const MessageDisplay = ({ messages }: Props) => {
         maxH="calc(80vh)"
         overflowY="scroll"
         maxW="720px"
-        bg="whiteAlpha.200"
-        border="2px"
-        borderColor="red.400"
+        bg="dark.bgPrimary"
+        // boxShadow="
+        //   rgb(204, 219, 232) 3px 3px 6px 0px inset,
+        //   rgb(204, 219, 232) 3px 3px 6px 0px inset,
+        //   rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset,
+        //   rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset"
+        borderRadius="5px"
       >
         {messages.map((msg, index) => {
           if (isChatMsg(msg)) {
             return (
               <Box alignSelf="start" key={`${msg.text}-${index}`}>
-                <UsernameText user={msg.user} />: <span>{msg.text}</span>
+                <UsernameText user={msg.user} />
+                <Text as="span" color="white">
+                  : {msg.text}
+                </Text>
               </Box>
             );
           } else {
             return (
               <Text
                 fontStyle="italic"
-                color="gray.500"
+                color="brand.primary"
                 fontSize="0.9rem"
                 key={msg.text}
               >

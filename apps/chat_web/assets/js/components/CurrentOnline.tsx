@@ -22,7 +22,7 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
 
   return (
     <Container flexGrow={1}>
-      <Heading as="h6" size="sm" pb="0.5rem">
+      <Heading as="h6" size="sm" pb="0.5rem" color="brand.main">
         Online right now
       </Heading>
       {onlineUsers.map((user) => {

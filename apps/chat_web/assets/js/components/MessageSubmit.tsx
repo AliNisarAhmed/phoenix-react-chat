@@ -1,5 +1,10 @@
 import { EmailIcon } from '@chakra-ui/icons';
-import { Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import {
+  FormControl,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
 import React, { ChangeEventHandler, FormEvent } from 'react';
 
 interface Props {
@@ -10,12 +15,28 @@ interface Props {
 
 const MessageSubmit = ({ onSubmit, value, onChange }: Props) => {
   return (
-    <form onSubmit={onSubmit}>
-      <InputGroup>
-        <InputRightElement children={<EmailIcon />} pointerEvents="all" color="green.500" fontSize="1.2em" />
-        <Input variant="outline" placeholder="Send a message" value={value} onChange={onChange} />
-      </InputGroup>
-    </form>
+    <FormControl my="8px">
+      <form onSubmit={onSubmit}>
+        <InputGroup bg="dark.bgPrimary">
+          <InputRightElement
+            children={<EmailIcon />}
+            pointerEvents="all"
+            color="green.500"
+            fontSize="1.2em"
+            cursor="pointer"
+            onClick={onSubmit}
+          />
+          <Input
+            variant="outline"
+            placeholder="Send a message"
+            value={value}
+            onChange={onChange}
+            _placeholder={{ opacity: 0.4, color: 'white' }}
+            color="white"
+          />
+        </InputGroup>
+      </form>
+    </FormControl>
   );
 };
 

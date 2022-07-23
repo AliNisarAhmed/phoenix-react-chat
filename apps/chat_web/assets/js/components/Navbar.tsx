@@ -29,10 +29,6 @@ import { PrivateRoom } from '../types';
 import OnlineStatus from './OnlineStatus';
 import UsernameText from './UsernameText';
 
-interface LocationState {
-  fromLobby?: boolean;
-}
-
 type ContextType = {
   room: PrivateRoom | null;
   setRoom: Dispatch<SetStateAction<PrivateRoom>>;
@@ -40,23 +36,14 @@ type ContextType = {
 
 const Navbar = () => {
   const { currentUser } = useCurrentUserContext();
-  console.log(
-    '🚀 ~ file: Navbar.tsx ~ line 43 ~ Navbar ~ currentUser',
-    currentUser,
-  );
 
   const [room, setRoom] = useState<PrivateRoom | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const location = useLocation();
-  const { fromLobby } = (location.state as LocationState) ?? {};
   const { roomId } = useParams();
   const navigate = useNavigate();
-  console.log(
-    '🚀 ~ file: Navbar.tsx ~ line 58 ~ useEffect ~ fromLobby',
-    fromLobby,
-  );
 
   useEffect(() => {
     let timer;
@@ -86,6 +73,8 @@ const Navbar = () => {
     } else {
       setIsLoading(false);
     }
+
+    return () => clearTimeout(timer);
   }, [location]);
 
   if (isLoading) {
@@ -111,9 +100,7 @@ const Navbar = () => {
         <NavbarHeading room={room} currentUser={currentUser} />
         <OnlineStatus size="lg" />
       </Flex>
-      <Container border="2px" maxW="720px">
-        <Outlet context={{ room, setRoom }} />
-      </Container>
+      <Outlet context={{ room, setRoom }} />
     </>
   );
 };

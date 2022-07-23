@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -13,10 +13,35 @@ import Welcome from './routes/Welcome';
 
 interface IProps {}
 
+const theme = extendTheme({
+  colors: {
+    brand: {
+      main: '#fe20fe',
+      primary: '#ff80ff',
+      secondary: '#4e0048',
+      tertiary: '#4e004d',
+    },
+    dark: {
+      bg: '#121212',
+      bgPrimary: '#2d3748',
+      bgSecondary: '#1a202c',
+      bgTertiary: '#011627',
+    },
+    lightBg: '',
+  },
+  styles: {
+    global: (props) => ({
+      'html, body': {
+        backgroundColor: props.colorMode === 'dark' ? 'white' : '#121212',
+      },
+    }),
+  },
+});
+
 const App: React.FC<IProps> = (props) => {
   return (
     <SocketProvider url={'/socket'}>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <CurrentUserProvider>
           <OnlineStatusProvider>
             <BrowserRouter>
