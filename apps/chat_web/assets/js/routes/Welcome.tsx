@@ -1,8 +1,4 @@
-import {
-  Flex,
-  Heading,
-  Link,
-} from '@chakra-ui/react';
+import { Flex, Heading, Link } from '@chakra-ui/react';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
@@ -19,11 +15,6 @@ const Welcome = ({}: Props) => {
 
   if (currentUser === null) {
     return <UsernameSelection onUsernameSelect={setUserAndGoToLobby} />;
-
-    function setUserAndGoToLobby(user: User) {
-      localStorageAPI.setUser(user);
-      navigate('/lobby');
-    }
   }
 
   return (
@@ -34,6 +25,11 @@ const Welcome = ({}: Props) => {
       </Link>
     </Flex>
   );
+
+  function setUserAndGoToLobby(user: User) {
+    localStorageAPI.setUser(user);
+    navigate('/lobby');
+  }
 };
 
 export default Welcome;
