@@ -24,5 +24,19 @@ const darkModeColors = [
   'pink.100',
   'pink.200',
   'purple.100',
-  'purple.200'
-]
+  'purple.200',
+  'blue.100',
+  'blue.200',
+  'orange.100',
+  'orange.200',
+  'yellow.100',
+  'yellow.200',
+  'cyan.100',
+  'cyan.200',
+  'bisque.100',
+  'bisque.200',
+  'aquamarine.100',
+  'aquamarine.200',
+  'darkslateblue.100',
+  'darkslateblue.200',
+];

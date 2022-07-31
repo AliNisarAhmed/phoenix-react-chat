@@ -15,6 +15,18 @@ interface IProps {}
 
 const theme = extendTheme({
   colors: {
+    aquamarine: {
+      100: '#b0ffe4',
+      200: '#80ffd4',
+    },
+    bisque: {
+      100: '#ffdcb3',
+      200: '#fec583',
+    },
+    darkslateblue: {
+      100: '#cecaec',
+      200: '#ada6d9',
+    },
     brand: {
       main: '#fe20fe',
       primary: '#ff80ff',
