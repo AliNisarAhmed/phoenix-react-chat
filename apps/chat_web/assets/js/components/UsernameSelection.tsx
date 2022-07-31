@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Center,
-  Container,
   Flex,
   Grid,
   GridItem,
@@ -32,18 +31,29 @@ const UsernameSelection = ({ onUsernameSelect }: Props) => {
       <GridItem rowStart={2} rowEnd={3} pt="2rem">
         <Center>
           <Flex direction="column">
-            <Text color="brand.main">
+            <Text color="brand.main" mb="2rem">
               Please choose a username below to continue
             </Text>
-            <VStack>
+            <VStack spacing="1rem">
               {[
                 generateRandomUser(),
                 generateRandomUser(),
                 generateRandomUser(),
               ].map((u) => (
-                <Button onClick={() => onUsernameSelect(u)} bg="dark.bgPrimary">
-                  <Flex direction="row">
-                    <Text color={u.color} pr="1rem">
+                <Button
+                  onClick={() => onUsernameSelect(u)}
+                  bg="dark.bgPrimary"
+                  _hover={{ bg: 'dark.bgSecondary' }}
+                  px="2rem"
+                  py="1rem"
+                >
+                  <Flex
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    w="15rem"
+                  >
+                    <Text color={u.color}>
                       {u.username}
                     </Text>
                     <Box
