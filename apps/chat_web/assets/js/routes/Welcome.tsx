@@ -1,4 +1,4 @@
-import { Flex, Heading, Link } from '@chakra-ui/react';
+import { Box, Grid, GridItem, Heading, Link } from '@chakra-ui/react';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
@@ -18,12 +18,21 @@ const Welcome = ({}: Props) => {
   }
 
   return (
-    <Flex>
-      <Heading as="h3">Welcome back {currentUser.username},</Heading>
-      <Link as={RouterLink} to="/lobby">
-        Click here to continue to the app
-      </Link>
-    </Flex>
+    <Grid templateRows="1fr 3fr" h="100vh" color="brand.main">
+      <GridItem rowStart={1} rowEnd={2} alignSelf="end">
+        <Heading as="h1" textAlign="center">
+          Welcome back{' '}
+          <Box as="span" color={currentUser.color}>
+            {currentUser.username}
+          </Box>
+        </Heading>
+      </GridItem>
+      <GridItem rowStart={2} rowEnd={3} alignSelf="center" justifySelf="center">
+        <Link as={RouterLink} to="/lobby" replace>
+          Click here to continue to the app
+        </Link>
+      </GridItem>
+    </Grid>
   );
 
   function setUserAndGoToLobby(user: User) {

@@ -50,31 +50,31 @@ const Navbar = () => {
 
     if (currentUser && roomId && !room) {
       fetchRoom();
-
-      async function fetchRoom() {
-        try {
-          const room = await ky
-            .get(`/api/rooms/${roomId}?username=${currentUser.username}`, {})
-            .json<PrivateRoom>();
-          setRoom(room);
-          setIsLoading(false);
-        } catch (error) {
-          if (error?.response?.status === 401) {
-            setError('You are not invited to this room... going back to lobby');
-          } else if (error?.response.status === 404) {
-            setError('Room not found, going back to lobby');
-          }
-          timer = setTimeout(() => {
-            navigate('/lobby');
-            setError(null);
-          }, 1500);
-        }
-      }
     } else {
       setIsLoading(false);
     }
 
     return () => clearTimeout(timer);
+
+    async function fetchRoom() {
+      try {
+        const room = await ky
+          .get(`/api/rooms/${roomId}?username=${currentUser.username}`, {})
+          .json<PrivateRoom>();
+        setRoom(room);
+        setIsLoading(false);
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          setError('You are not invited to this room... going back to lobby');
+        } else if (error?.response.status === 404) {
+          setError('Room not found, going back to lobby');
+        }
+        timer = setTimeout(() => {
+          navigate('/lobby');
+          setError(null);
+        }, 1500);
+      }
+    }
   }, [location]);
 
   if (isLoading) {
@@ -90,7 +90,11 @@ const Navbar = () => {
     return <div>{error}</div>;
   }
 
-  if (currentUser === null || currentUser?.status === 'loggedOut') {
+  if (
+    currentUser === null ||
+    currentUser?.status === 'loggedOut' ||
+    !isLobby(location)
+  ) {
     return <Outlet context={{ room, setRoom }} />;
   }
 
@@ -104,6 +108,10 @@ const Navbar = () => {
     </>
   );
 };
+
+function isLobby(location) {
+  return location.pathname === '/lobby';
+}
 
 export function useNavbarContext() {
   return useOutletContext<ContextType>();
