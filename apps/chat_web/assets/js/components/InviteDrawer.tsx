@@ -52,28 +52,44 @@ const InviteDrawer = ({
         size="md"
       >
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
+        <DrawerContent bg="dark.bgSecondary">
+          <DrawerCloseButton color="brand.main" />
           <DrawerHeader>Create a Private Room</DrawerHeader>
           <DrawerBody>
             <Flex direction="column" justify="space-evenly" h="100%">
-              <InputGroup justifySelf="start">
-                <InputLeftAddon children="Topic" />
+              <InputGroup justifySelf="start" mb="1rem">
+                <InputLeftAddon
+                  children="Topic"
+                  bg="dark.bgTertiary"
+                  color="brand.main"
+                  w="5rem"
+                  border="none"
+                />
                 <Input
                   variant="outline"
                   value={topicValue}
                   onChange={topicOnChange}
                   placeholder="Choose a topic for your private room"
-                  aria-label=""
+                  aria-label="Choose a topic for your private room"
+                  color="whiteAlpha.800"
+                  border="none"
                 />
               </InputGroup>
-              <InputGroup>
-                <InputLeftAddon children="Filter" />
+              <InputGroup mb="1rem">
+                <InputLeftAddon
+                  children="Filter"
+                  bg="dark.bgTertiary"
+                  color="brand.main"
+                  w="5rem"
+                  border="none"
+                />
                 <Input
                   variant="outline"
                   value={usernameFilter}
                   onChange={(e) => setUsernameFilter(e.target.value)}
                   placeholder="Search users by username"
+                  color="whiteAlpha.800"
+                  border="none"
                 />
               </InputGroup>
               <SelectUsersToInvite
@@ -86,13 +102,23 @@ const InviteDrawer = ({
             </Flex>
           </DrawerBody>
           <DrawerFooter>
-            <Button variant="outline" onClick={onClose} mr="1rem" w="5rem">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              mr="1rem"
+              w="5rem"
+              color="whiteAlpha.800"
+              bg="brand.secondary"
+              _hover={{ bg: 'brand.tertiary' }}
+              borderColor="dark.bg"
+            >
               Cancel
             </Button>
             <Button
               w="5rem"
               colorScheme="blue"
               onClick={async () => await drawerAction()}
+              bg="dark.bgPrimary"
             >
               Start
             </Button>

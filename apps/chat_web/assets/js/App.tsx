@@ -31,7 +31,7 @@ const theme = extendTheme({
       main: '#fe20fe',
       primary: '#ff80ff',
       secondary: '#4e0048',
-      tertiary: '#4e004d',
+      tertiary: '#1d001d',
     },
     dark: {
       bg: '#121212',
@@ -50,7 +50,7 @@ const theme = extendTheme({
   },
 });
 
-const App: React.FC<IProps> = (props) => {
+const App = (props: IProps) => {
   return (
     <SocketProvider url={'/socket'}>
       <ChakraProvider theme={theme}>

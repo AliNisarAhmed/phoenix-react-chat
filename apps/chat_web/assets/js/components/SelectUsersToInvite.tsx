@@ -20,7 +20,9 @@ const SelectUsersToInvite = ({
       w="100%"
       h="100%"
       justifySelf="center"
-      border="1px solid blue"
+      borderWidth="1px"
+      borderColor="brand.main"
+      borderRadius=".5rem"
       direction="column"
       align="start"
     >
