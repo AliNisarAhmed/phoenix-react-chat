@@ -1,4 +1,3 @@
-import { EmailIcon } from '@chakra-ui/icons';
 import {
   FormControl,
   Input,
@@ -6,6 +5,7 @@ import {
   InputRightElement,
 } from '@chakra-ui/react';
 import React, { ChangeEventHandler, FormEvent } from 'react';
+import { IoMdSend } from 'react-icons/io';
 
 interface Props {
   onSubmit: (e: FormEvent) => void;
@@ -19,7 +19,7 @@ const MessageSubmit = ({ onSubmit, value, onChange }: Props) => {
       <form onSubmit={onSubmit}>
         <InputGroup bg="dark.bgPrimary">
           <InputRightElement
-            children={<EmailIcon />}
+            children={<IoMdSend />}
             pointerEvents="all"
             color="green.500"
             fontSize="1.2em"

@@ -69,7 +69,7 @@ const Lobby = () => {
   });
 
   return (
-    <Container maxW="980px" bg='dark.bgSecondary'>
+    <Container maxW="980px" bg="dark.bgSecondary">
       <SimpleGrid columns={2} spacing={10} templateColumns="3fr 1fr">
         <Flex direction="column">
           <MessageDisplay messages={messages} />
@@ -165,11 +165,13 @@ const Lobby = () => {
 
   function submitMessage(e: FormEvent) {
     e.preventDefault();
-    sendMessage(channel, 'submit_message', {
-      text: messageText,
-      user: currentUser,
-    });
-    setMessageText('');
+    if (messageText.length > 0) {
+      sendMessage(channel, 'submit_message', {
+        text: messageText,
+        user: currentUser,
+      });
+      setMessageText('');
+    }
   }
 
   async function startPrivateChat() {
