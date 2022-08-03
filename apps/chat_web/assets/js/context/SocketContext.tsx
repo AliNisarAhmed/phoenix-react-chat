@@ -1,6 +1,5 @@
-import { Socket, SocketConnectOption } from 'phoenix';
+import { Socket, SocketConnectOption } from 'phoenix'; 
 import React, {
-  FC,
   ReactNode,
   createContext,
   useEffect,

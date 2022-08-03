@@ -11,8 +11,6 @@ import Lobby from './routes/Lobby';
 import PrivateRoom from './routes/PrivateRoom';
 import Welcome from './routes/Welcome';
 
-interface IProps {}
-
 const theme = extendTheme({
   colors: {
     aquamarine: {
@@ -42,7 +40,7 @@ const theme = extendTheme({
     lightBg: '',
   },
   styles: {
-    global: (props) => ({
+    global: (props: { colorMode: string }) => ({
       'html, body': {
         backgroundColor: props.colorMode === 'dark' ? 'white' : '#121212',
       },
@@ -50,7 +48,7 @@ const theme = extendTheme({
   },
 });
 
-const App = (props: IProps) => {
+const App = () => {
   return (
     <SocketProvider url={'/socket'}>
       <ChakraProvider theme={theme}>

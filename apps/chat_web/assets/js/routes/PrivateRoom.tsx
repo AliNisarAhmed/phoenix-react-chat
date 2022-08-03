@@ -3,8 +3,10 @@ import {
   Button,
   Container,
   Flex,
+  Grid,
+  GridItem,
   Heading,
-  SimpleGrid,
+  Input,
   Spinner,
   Text,
   useClipboard,
@@ -22,11 +24,9 @@ import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
 import { Msg, User, UserMetas, convertUserMetasToUser } from '../types';
 
-interface Props {}
-
 type PageState = 'loading' | 'ready';
 
-const PrivateRoom = ({}: Props) => {
+const PrivateRoom = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const PrivateRoom = ({}: Props) => {
   const { currentUser } = useCurrentUserContext();
   const { room, setRoom } = useNavbarContext();
 
-  const sharedUrl = `http://localhost:4000/rooms/invite/${room?.shareable_code}`;
+  const sharedUrl = `http://localhost:3000/rooms/invite/${room?.shareable_code}`;
 
   const { hasCopied, onCopy } = useClipboard(sharedUrl);
 
@@ -89,40 +89,65 @@ const PrivateRoom = ({}: Props) => {
   }
 
   return (
-    <SimpleGrid columns={2} spacing={10} templateColumns="2fr 1fr">
-      <Flex direction="column">
-        <Box>
-          <Heading as="h3" display="inline">
-            Topic:{' '}
-          </Heading>
-          <Text display="inline">{room?.topic}</Text>
-        </Box>
-        <Button onClick={goBackToLobby} colorScheme="blue">
-          Go back to Lobby
-        </Button>
-        <MessageDisplay messages={messages} />
-        <MessageSubmit
-          onSubmit={submitMessage}
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-        />
-      </Flex>
-      <Flex direction="column">
-        <CurrentOnline
-          onlineUsers={onlineUsers.filter(
-            (u) => u.username !== currentUser.username,
-          )}
-          privateRoom
-          kickUser={kickUser}
-        />
-        <Flex>
-          <input value={`.../invite/${room.shareable_code}`} readOnly />
-          <Button onClick={onCopy} ml={2}>
-            {hasCopied ? 'Copied!' : 'Copy Link'}
-          </Button>
-        </Flex>
-      </Flex>
-    </SimpleGrid>
+    <Container maxW="980px" bg="dark.bgSecondary">
+      <Grid templateColumns="3fr 1fr">
+        <GridItem>
+          <Flex direction="column">
+            <Box>
+              <Heading as="h3" display="inline" color="brand.main">
+                Topic:{' '}
+              </Heading>
+              <Text display="inline">{room?.topic}</Text>
+            </Box>
+            <Box>
+              <MessageDisplay messages={messages} />
+            </Box>
+            <MessageSubmit
+              onSubmit={submitMessage}
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+            />
+          </Flex>
+        </GridItem>
+        <GridItem>
+          <Flex direction="column" h="100%">
+            <CurrentOnline
+              onlineUsers={onlineUsers.filter(
+                (u) => u.username !== currentUser.username,
+              )}
+              kickUser={kickUser}
+              privateRoom
+            />
+            <Flex direction="column">
+              {currentUser?.username === room?.owner && (
+                <Flex mb="2rem" direction="column">
+                  <Input
+                    value={`.../invite/${room.shareable_code}`}
+                    readOnly
+                    bg="dark.bg"
+                    color="brand.main"
+                    onClick={onCopy}
+                    border="none"
+                  />
+                  <Button
+                    onClick={onCopy}
+                    ml={2}
+                    bg="brand.secondary"
+                    color="white"
+                    _hover={{ bg: 'brand.tertiary' }}
+                  >
+                    {hasCopied ? 'Copied!' : 'Copy Link'}
+                  </Button>
+                </Flex>
+              )}
+              <Button onClick={goBackToLobby} colorScheme="blue">
+                Go back to Lobby
+              </Button>
+            </Flex>
+          </Flex>
+        </GridItem>
+      </Grid>
+    </Container>
   );
 
   function kickUser(username: string) {
