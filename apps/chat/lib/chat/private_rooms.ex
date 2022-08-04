@@ -70,10 +70,17 @@ defmodule Chat.PrivateRooms do
     room.owner == username or Enum.member?(room.invitees, username)
   end
 
+  def update_topic(room, new_topic) do 
+    room
+    |> PrivateRoom.update_topic_changeset(%{topic: new_topic})
+    |> Repo.update!()
+  end
+
   defp generate_code(length \\ 16) do
     length
     |> :crypto.strong_rand_bytes()
     |> Base.url_encode64()
     |> binary_part(0, length)
   end
+
 end

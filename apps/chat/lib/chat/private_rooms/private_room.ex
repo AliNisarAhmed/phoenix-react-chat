@@ -18,4 +18,10 @@ defmodule Chat.PrivateRooms.PrivateRoom do
     |> cast(attrs, [:owner, :room_id, :invitees, :topic, :shareable_code])
     |> validate_required([:owner, :room_id, :shareable_code])
   end
+
+  def update_topic_changeset(private_room, attrs) do 
+    private_room 
+    |> cast(attrs, [:topic])
+    |> validate_required([:topic])
+  end
 end
