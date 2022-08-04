@@ -1,6 +1,6 @@
 import { generate } from 'canihazusername';
 
-import randomcolor from '../../vendor/randomcolor';
+import { PrivateRoom, User } from '../types';
 
 export function generateRandomUser() {
   return {
@@ -40,3 +40,7 @@ const darkModeColors = [
   'darkslateblue.100',
   'darkslateblue.200',
 ];
+
+export function isOwner(currentUser: User, room: PrivateRoom): boolean {
+  return currentUser.username === room.owner;
+}

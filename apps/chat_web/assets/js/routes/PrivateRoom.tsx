@@ -8,10 +8,10 @@ import {
   Heading,
   Input,
   Spinner,
-  Text,
   useClipboard,
 } from '@chakra-ui/react';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import CurrentOnline from '../components/CurrentOnline';
@@ -23,20 +23,24 @@ import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
 import { Msg, User, UserMetas, convertUserMetasToUser } from '../types';
+import { isOwner } from '../utils';
 
-type PageState = 'loading' | 'ready';
+type PageState = 'loading' | 'ready' | 'editing-topic';
 
 const PrivateRoom = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
 
+  const { currentUser } = useCurrentUserContext();
+  const { room, setRoom } = useNavbarContext();
+
   const [pageState, setPageState] = useState<PageState>('loading');
   const [messages, setMessages] = useState<Msg[]>([]);
   const [messageText, setMessageText] = useState<string>('');
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [newTopic, setNewTopic] = useState<string>(room?.topic);
 
-  const { currentUser } = useCurrentUserContext();
-  const { room, setRoom } = useNavbarContext();
+  const topicInputRef = useRef(null);
 
   const sharedUrl = `http://localhost:3000/rooms/invite/${room?.shareable_code}`;
 
@@ -80,6 +84,12 @@ const PrivateRoom = () => {
     }
   });
 
+  useEffect(() => {
+    if (pageState === 'editing-topic') {
+      topicInputRef.current.focus();
+    }
+  }, [pageState]);
+
   if (pageState === 'loading') {
     return (
       <Container centerContent>
@@ -93,12 +103,32 @@ const PrivateRoom = () => {
       <Grid templateColumns="3fr 1fr">
         <GridItem>
           <Flex direction="column">
-            <Box>
-              <Heading as="h3" display="inline" color="brand.main">
+            <Flex>
+              <Heading as="h2" display="inline" color="brand.main">
                 Topic:{' '}
               </Heading>
-              <Text display="inline">{room?.topic}</Text>
-            </Box>
+              {pageState === 'editing-topic' && isOwner(currentUser, room) ? (
+                <form onSubmit={submitNewTopic}>
+                  <Input
+                    display="inline"
+                    value={newTopic}
+                    color="whiteAlpha.700"
+                    ref={topicInputRef}
+                    onChange={(e) => setNewTopic(e.target.value)}
+                    onBlur={cancelTopicEdit}
+                  />
+                </form>
+              ) : (
+                <Heading
+                  display="inline"
+                  color="whiteAlpha.700"
+                  as="h1"
+                  onClick={editTopic}
+                >
+                  {room?.topic}
+                </Heading>
+              )}
+            </Flex>
             <Box>
               <MessageDisplay messages={messages} />
             </Box>
@@ -119,7 +149,7 @@ const PrivateRoom = () => {
               privateRoom
             />
             <Flex direction="column">
-              {currentUser?.username === room?.owner && (
+              {isOwner(currentUser, room) && (
                 <Flex mb="2rem" direction="column">
                   <Input
                     value={`.../invite/${room.shareable_code}`}
@@ -150,12 +180,26 @@ const PrivateRoom = () => {
     </Container>
   );
 
+  async function submitNewTopic(e) {
+    e.preventDefault();
+    console.log('Form submitted');
+  }
+
+  function cancelTopicEdit() {
+    setPageState('ready');
+    setNewTopic(room.topic);
+  }
+
+  function editTopic(e) {
+    setPageState('editing-topic');
+  }
+
   function kickUser(username: string) {
     sendMessage(channel, 'kick_user', { username, room_id: roomId });
   }
 
   function goBackToLobby() {
-    if (room.owner === currentUser.username) {
+    if (isOwner(currentUser, room)) {
       sendMessage(channel, 'private_room_closed', { room_id: roomId });
     }
     channel?.leave();
