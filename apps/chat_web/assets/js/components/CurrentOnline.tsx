@@ -27,7 +27,6 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
       </Heading>
       {onlineUsers.map((user) => {
         const isBlocked = currentUser.blockedList[user.username];
-        console.log('isBlocked', isBlocked);
 
         return (
           <Flex direction="row" align="center" gap="5px" key={user.username}>
@@ -38,6 +37,13 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
                 aria-label={`kick user ${user.username}`}
                 as={GiBootKick}
                 onClick={() => kickUser?.(user.username)}
+                color="steelblue"
+                bg="transparent"
+                fontSize="1rem"
+                w="2rem"
+                h="2rem"
+                cursor="pointer"
+                _hover={{ bg: 'transparent', color: 'brand.secondary' }}
               />
             )}
             {!privateRoom && currentUser.username !== user.username ? (
@@ -46,12 +52,26 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
                   aria-label={`block user ${user.username}`}
                   icon={<Icon as={CgUnblock} />}
                   onClick={() => setBlockedStatus(user.username, false)}
+                  color="steelblue"
+                  bg="transparent"
+                  fontSize="1rem"
+                  w="2rem"
+                  h="2rem"
+                  cursor="pointer"
+                  _hover={{ bg: 'transparent', color: 'brand.secondary' }}
                 />
               ) : (
                 <IconButton
                   aria-label={`unblock user ${user.username}`}
                   icon={<Icon as={BiBlock} />}
                   onClick={() => setBlockedStatus(user.username, true)}
+                  color="steelblue"
+                  bg="transparent"
+                  fontSize="1rem"
+                  w="2rem"
+                  h="2rem"
+                  cursor="pointer"
+                  _hover={{ bg: 'transparent', color: 'brand.secondary' }}
                 />
               )
             ) : null}
