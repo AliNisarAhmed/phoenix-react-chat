@@ -10,6 +10,7 @@ import {
   Spinner,
   useClipboard,
 } from '@chakra-ui/react';
+import ky from 'ky';
 import React, { FormEvent, useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,7 +23,7 @@ import { useCurrentUserContext } from '../context/CurrentUserContext';
 import { sendMessage, useChannel } from '../hooks/useChannel';
 import { useEventHandler } from '../hooks/useEventHandler';
 import { usePresence } from '../hooks/usePresence';
-import { Msg, User, UserMetas, convertUserMetasToUser } from '../types';
+import { Msg, User, UserMetas, PrivateRoom, convertUserMetasToUser } from '../types';
 import { isOwner } from '../utils';
 
 type PageState = 'loading' | 'ready' | 'editing-topic';
@@ -68,6 +69,11 @@ const PrivateRoom = () => {
 
   useEventHandler(channel, 'new_message', (payload) => {
     setMessages((prev) => [...prev, payload]);
+  });
+
+  useEventHandler(channel, 'topic_updated', (payload) => {
+    setRoom(prev => ({...prev, topic: payload.new_topic}));
+    setMessages(prev => [...prev, payload.message]);
   });
 
   useEventHandler(channel, 'private_room_closed', (_, _channel) => {
@@ -182,7 +188,16 @@ const PrivateRoom = () => {
 
   async function submitNewTopic(e) {
     e.preventDefault();
-    console.log('Form submitted');
+    if (room.topic !== newTopic) {
+      const updatedRoom = await ky
+        .post(`/api/rooms/${room.room_id}/topic`, {
+          json: { new_topic: newTopic },
+        })
+        .json<PrivateRoom>();
+      setRoom(updatedRoom);
+    }
+
+    setPageState('ready');
   }
 
   function cancelTopicEdit() {
