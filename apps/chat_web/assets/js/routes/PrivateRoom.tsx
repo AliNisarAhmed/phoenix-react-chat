@@ -1,3 +1,4 @@
+import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -8,11 +9,17 @@ import {
   Heading,
   Input,
   Spinner,
+  Editable,
   useClipboard,
+  useEditableControls,
+  ButtonGroup,
+  IconButton,
+  EditablePreview,
+  EditableInput,
+  Tooltip,
 } from '@chakra-ui/react';
 import ky from 'ky';
-import React, { FormEvent, useRef, useState } from 'react';
-import { useEffect } from 'react';
+import React, { FormEvent, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import CurrentOnline from '../components/CurrentOnline';
@@ -26,7 +33,7 @@ import { usePresence } from '../hooks/usePresence';
 import { Msg, User, UserMetas, PrivateRoom, convertUserMetasToUser } from '../types';
 import { isOwner } from '../utils';
 
-type PageState = 'loading' | 'ready' | 'editing-topic';
+type PageState = 'loading' | 'ready';
 
 const PrivateRoom = () => {
   const { roomId } = useParams();
@@ -35,13 +42,14 @@ const PrivateRoom = () => {
   const { currentUser } = useCurrentUserContext();
   const { room, setRoom } = useNavbarContext();
 
+
+  const isRoomOwner = useMemo(() => isOwner(currentUser, room), [currentUser, room]);
+
   const [pageState, setPageState] = useState<PageState>('loading');
   const [messages, setMessages] = useState<Msg[]>([]);
   const [messageText, setMessageText] = useState<string>('');
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
-  const [newTopic, setNewTopic] = useState<string>(room?.topic);
-
-  const topicInputRef = useRef(null);
+  const [roomTopic, setRoomTopic] = useState<string>(room.topic);
 
   const sharedUrl = `http://localhost:3000/rooms/invite/${room?.shareable_code}`;
 
@@ -72,7 +80,7 @@ const PrivateRoom = () => {
   });
 
   useEventHandler(channel, 'topic_updated', (payload) => {
-    setRoom(prev => ({...prev, topic: payload.new_topic}));
+    setRoomTopic(payload.new_topic);
     setMessages(prev => [...prev, payload.message]);
   });
 
@@ -89,12 +97,6 @@ const PrivateRoom = () => {
       navigate('/');
     }
   });
-
-  useEffect(() => {
-    if (pageState === 'editing-topic') {
-      topicInputRef.current.focus();
-    }
-  }, [pageState]);
 
   if (pageState === 'loading') {
     return (
@@ -113,27 +115,23 @@ const PrivateRoom = () => {
               <Heading as="h2" display="inline" color="brand.main">
                 Topic:{' '}
               </Heading>
-              {pageState === 'editing-topic' && isOwner(currentUser, room) ? (
-                <form onSubmit={submitNewTopic}>
-                  <Input
-                    display="inline"
-                    value={newTopic}
-                    color="whiteAlpha.700"
-                    ref={topicInputRef}
-                    onChange={(e) => setNewTopic(e.target.value)}
-                    onBlur={cancelTopicEdit}
-                  />
-                </form>
-              ) : (
-                <Heading
-                  display="inline"
-                  color="whiteAlpha.700"
-                  as="h1"
-                  onClick={editTopic}
-                >
-                  {room?.topic}
-                </Heading>
-              )}
+              <Editable 
+                textAlign='left'
+                isPreviewFocusable={isRoomOwner}
+                color="brand.main"
+                fontSize="2xl"
+                isDisabled={!isRoomOwner}
+                onSubmit={async (v) => await submitNewTopic(v)}
+                value={roomTopic}
+                onChange={v => setRoomTopic(v)}
+              >
+                <Flex>
+                  <Tooltip label="Click to edit">
+                    <EditablePreview />
+                  </Tooltip>
+                  {isRoomOwner && <Input as={EditableInput} value={room.topic}/>}
+                </Flex>
+              </Editable>
             </Flex>
             <Box>
               <MessageDisplay messages={messages} />
@@ -155,7 +153,7 @@ const PrivateRoom = () => {
               privateRoom
             />
             <Flex direction="column">
-              {isOwner(currentUser, room) && (
+              {isRoomOwner && (
                 <Flex mb="2rem" direction="column">
                   <Input
                     value={`.../invite/${room.shareable_code}`}
@@ -186,27 +184,14 @@ const PrivateRoom = () => {
     </Container>
   );
 
-  async function submitNewTopic(e) {
-    e.preventDefault();
+  async function submitNewTopic(newTopic: string) {
     if (room.topic !== newTopic) {
-      const updatedRoom = await ky
+      await ky
         .post(`/api/rooms/${room.room_id}/topic`, {
           json: { new_topic: newTopic },
         })
         .json<PrivateRoom>();
-      setRoom(updatedRoom);
     }
-
-    setPageState('ready');
-  }
-
-  function cancelTopicEdit() {
-    setPageState('ready');
-    setNewTopic(room.topic);
-  }
-
-  function editTopic(e) {
-    setPageState('editing-topic');
   }
 
   function kickUser(username: string) {
@@ -214,7 +199,7 @@ const PrivateRoom = () => {
   }
 
   function goBackToLobby() {
-    if (isOwner(currentUser, room)) {
+    if (isRoomOwner) {
       sendMessage(channel, 'private_room_closed', { room_id: roomId });
     }
     channel?.leave();
@@ -241,7 +226,6 @@ const PrivateRoom = () => {
 
   function submitMessage(e: FormEvent) {
     e.preventDefault();
-    console.log('submitting a message', channel);
     sendMessage(channel, 'submit_message', {
       text: messageText,
       user: currentUser,
