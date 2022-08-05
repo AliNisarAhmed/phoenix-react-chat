@@ -76,6 +76,10 @@ defmodule Chat.PrivateRooms do
     |> Repo.update!()
   end
 
+  def is_owner?(%PrivateRoom{owner: owner}, username) do 
+    owner == username 
+  end
+
   defp generate_code(length \\ 16) do
     length
     |> :crypto.strong_rand_bytes()

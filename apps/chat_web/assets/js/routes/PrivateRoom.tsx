@@ -1,4 +1,3 @@
-import { CheckIcon, CloseIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -11,9 +10,6 @@ import {
   Spinner,
   Editable,
   useClipboard,
-  useEditableControls,
-  ButtonGroup,
-  IconButton,
   EditablePreview,
   EditableInput,
   Tooltip,
@@ -188,7 +184,7 @@ const PrivateRoom = () => {
     if (room.topic !== newTopic) {
       await ky
         .post(`/api/rooms/${room.room_id}/topic`, {
-          json: { new_topic: newTopic },
+          json: { new_topic: newTopic, username: currentUser.username },
         })
         .json<PrivateRoom>();
     }

@@ -44,8 +44,9 @@ defmodule ChatWeb.PrivateRoomController do
     end
   end
 
-  def update_topic(conn, %{"room_id" => room_id, "new_topic" => new_topic}) do
-    with room when not is_nil(room) <- PrivateRooms.get_private_room(room_id) do
+  def update_topic(conn, %{"room_id" => room_id, "new_topic" => new_topic, "username" => username}) do
+    with room when not is_nil(room) <- PrivateRooms.get_private_room(room_id), 
+        true <- PrivateRooms.is_owner?(room, username) do
       updated_room = PrivateRooms.update_topic(room, new_topic)
 
       ChatWeb.Endpoint.broadcast!("rooms:" <> room_id, "topic_updated", %{
@@ -54,6 +55,9 @@ defmodule ChatWeb.PrivateRoomController do
       })
 
       render(conn, "create.json", %{room: updated_room})
+    else 
+      false -> {:error, :not_authorized}
+      _ -> {:error, :not_found}
     end
   end
 end
