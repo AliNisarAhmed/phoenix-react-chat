@@ -45,7 +45,7 @@ const Lobby = () => {
 
   const toast = useToast();
   const toastIdRef = useRef<ToastId | undefined>();
-  const openButtonRef = useRef();
+  const openButtonRef = useRef<HTMLButtonElement>();
 
   const channel: Channel = useChannel('rooms:lobby', {
     username: currentUser.username,
@@ -78,7 +78,7 @@ const Lobby = () => {
       borderRadius="0.5rem"
       p="0"
     >
-      <SimpleGrid columns={2} spacing={10} templateColumns="3fr 1fr">
+      <SimpleGrid columns={2} templateColumns="3fr 1fr">
         <Flex
           direction="column"
           borderRight="1px solid"
@@ -91,12 +91,10 @@ const Lobby = () => {
             onChange={(e) => setMessageText(e.target.value)}
           />
         </Flex>
-        <Container py="0.5rem">
-          <Flex direction="column" justify="space-between" h="100%">
-            <CurrentOnline onlineUsers={onlineUsers} />
-            <ActionButton onClick={openInviteDrawer} ref={openButtonRef} />
-          </Flex>
-        </Container>
+        <Flex direction="column" justify="space-between" h="100%">
+          <CurrentOnline onlineUsers={onlineUsers} />
+          <ActionButton onClick={openInviteDrawer} ref={openButtonRef} />
+        </Flex>
       </SimpleGrid>
       <InviteDrawer
         isOpen={inviteDrawerOpen}
