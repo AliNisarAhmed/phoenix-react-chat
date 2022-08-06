@@ -1,4 +1,11 @@
-import { Container, Flex, Heading, Icon, IconButton } from '@chakra-ui/react';
+import {
+  Container,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  useColorMode,
+} from '@chakra-ui/react';
 import React from 'react';
 import { BiBlock } from 'react-icons/bi';
 import { CgUnblock } from 'react-icons/cg';
@@ -19,10 +26,11 @@ interface Props {
 const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
   const { room } = useNavbarContext();
   const { currentUser, setBlockedStatus } = useCurrentUserContext();
+  const { colorMode } = useColorMode();
 
   return (
     <Container flexGrow={1}>
-      <Heading as="h6" size="sm" pb="0.5rem" color="brand.main">
+      <Heading as="h6" size="sm" pb="0.5rem" color={`${colorMode}.brand.main`}>
         Online right now
       </Heading>
       {onlineUsers.map((user) => {
@@ -43,7 +51,10 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
                 w="2rem"
                 h="2rem"
                 cursor="pointer"
-                _hover={{ bg: 'transparent', color: 'brand.secondary' }}
+                _hover={{
+                  bg: 'transparent',
+                  color: `${colorMode}.brand.secondary`,
+                }}
               />
             )}
             {!privateRoom && currentUser.username !== user.username ? (
@@ -58,7 +69,10 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
                   w="2rem"
                   h="2rem"
                   cursor="pointer"
-                  _hover={{ bg: 'transparent', color: 'brand.secondary' }}
+                  _hover={{
+                    bg: 'transparent',
+                    color: `${colorMode}.brand.secondary`,
+                  }}
                 />
               ) : (
                 <IconButton
@@ -71,7 +85,10 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
                   w="2rem"
                   h="2rem"
                   cursor="pointer"
-                  _hover={{ bg: 'transparent', color: 'brand.secondary' }}
+                  _hover={{
+                    bg: 'transparent',
+                    color: `${colorMode}.brand.secondary`,
+                  }}
                 />
               )
             ) : null}

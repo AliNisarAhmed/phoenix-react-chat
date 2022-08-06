@@ -33,6 +33,11 @@ export const theme = extendTheme({
         secondary: '#1a202c',
         tertiary: '#011627',
       },
+      text: {
+        primary: '#ffffffb3',
+        secondary: '#ffffff42',
+        tertiary: '#ffffff66',
+      },
     },
     light: {},
   },

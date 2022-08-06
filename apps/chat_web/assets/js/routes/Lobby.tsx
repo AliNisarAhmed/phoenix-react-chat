@@ -3,6 +3,7 @@ import {
   Flex,
   SimpleGrid,
   ToastId,
+  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 import ky from 'ky';
@@ -30,6 +31,11 @@ import {
 } from '../types';
 
 const Lobby = () => {
+  const navigate = useNavigate();
+  const { currentUser } = useCurrentUserContext();
+  const { setRoom } = useNavbarContext();
+  const { colorMode } = useColorMode();
+
   const [messages, setMessages] = useState<Msg[]>([]);
   const [messageText, setMessageText] = useState<string>('');
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
@@ -39,11 +45,6 @@ const Lobby = () => {
 
   const toast = useToast();
   const toastIdRef = useRef<ToastId | undefined>();
-
-  const navigate = useNavigate();
-  const { currentUser } = useCurrentUserContext();
-  const { setRoom } = useNavbarContext();
-
   const openButtonRef = useRef();
 
   const channel: Channel = useChannel('rooms:lobby', {
@@ -69,9 +70,20 @@ const Lobby = () => {
   });
 
   return (
-    <Container maxW="980px" bg="dark.bgSecondary">
+    <Container
+      maxW="980px"
+      bg={`${colorMode}.bg.tertiary`}
+      border="1px solid"
+      borderColor={`${colorMode}.bg.primary`}
+      borderRadius="0.5rem"
+      p="0"
+    >
       <SimpleGrid columns={2} spacing={10} templateColumns="3fr 1fr">
-        <Flex direction="column">
+        <Flex
+          direction="column"
+          borderRight="1px solid"
+          borderColor={`${colorMode}.bg.primary`}
+        >
           <MessageDisplay messages={messages} />
           <MessageSubmit
             onSubmit={submitMessage}
@@ -79,7 +91,7 @@ const Lobby = () => {
             onChange={(e) => setMessageText(e.target.value)}
           />
         </Flex>
-        <Container px="1rem" py="0.5rem">
+        <Container py="0.5rem">
           <Flex direction="column" justify="space-between" h="100%">
             <CurrentOnline onlineUsers={onlineUsers} />
             <ActionButton onClick={openInviteDrawer} ref={openButtonRef} />

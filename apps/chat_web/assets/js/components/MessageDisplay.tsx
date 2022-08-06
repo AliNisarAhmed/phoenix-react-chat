@@ -1,4 +1,4 @@
-import { Box, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, VStack, useColorMode } from '@chakra-ui/react';
 import React from 'react';
 
 import { Msg, isChatMsg } from '../types';
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const MessageDisplay = ({ messages }: Props) => {
+  const { colorMode } = useColorMode();
   return (
     <Flex direction="column">
       <VStack
@@ -16,15 +17,14 @@ const MessageDisplay = ({ messages }: Props) => {
         maxH="calc(80vh)"
         overflowY="scroll"
         maxW="720px"
-        bg="dark.bgPrimary"
         borderRadius="5px"
       >
         {messages.map((msg, index) => {
           if (isChatMsg(msg)) {
             return (
-              <Box alignSelf="start" key={`${msg.text}-${index}`}>
+              <Box pr="0.5rem" alignSelf="start" key={`${msg.text}-${index}`}>
                 <UsernameText user={msg.user} />
-                <Text as="span" color="white">
+                <Text as="span" color={`${colorMode}.text.primary`}>
                   : {msg.text}
                 </Text>
               </Box>
@@ -33,7 +33,7 @@ const MessageDisplay = ({ messages }: Props) => {
             return (
               <Text
                 fontStyle="italic"
-                color="brand.primary"
+                color={`${colorMode}.text.secondary`}
                 fontSize="0.9rem"
                 key={msg.text}
               >

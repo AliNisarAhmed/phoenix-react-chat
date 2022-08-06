@@ -1,4 +1,4 @@
-import { IconButton, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { IconButton, useColorMode } from '@chakra-ui/react';
 import React from 'react';
 import { FaMoon, FaSun } from 'react-icons/fa';
 

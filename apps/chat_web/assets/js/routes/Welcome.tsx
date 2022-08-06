@@ -1,4 +1,11 @@
-import { Box, Grid, GridItem, Heading, Link } from '@chakra-ui/react';
+import {
+  Box,
+  Grid,
+  GridItem,
+  Heading,
+  Link,
+  useColorMode,
+} from '@chakra-ui/react';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
@@ -7,18 +14,18 @@ import { useCurrentUserContext } from '../context/CurrentUserContext';
 import * as localStorageAPI from '../localStorage';
 import { User } from '../types';
 
-interface Props {}
-
-const Welcome = ({}: Props) => {
+const Welcome = () => {
   const navigate = useNavigate();
   const { currentUser } = useCurrentUserContext();
+
+  const { colorMode } = useColorMode();
 
   if (currentUser === null) {
     return <UsernameSelection onUsernameSelect={setUserAndGoToLobby} />;
   }
 
   return (
-    <Grid templateRows="1fr 3fr" h="100vh" color="brand.main">
+    <Grid templateRows="1fr 3fr" h="100vh" color={`${colorMode}.brand.main`}>
       <GridItem rowStart={1} rowEnd={2} alignSelf="end">
         <Heading as="h1" textAlign="center">
           Welcome back{' '}

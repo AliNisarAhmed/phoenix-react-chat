@@ -11,6 +11,7 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  useColorMode,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 
@@ -42,6 +43,8 @@ const InviteDrawer = ({
 }: Props) => {
   const [usernameFilter, setUsernameFilter] = useState<string>('');
 
+  const { colorMode } = useColorMode();
+
   return (
     <>
       <Drawer
@@ -52,44 +55,63 @@ const InviteDrawer = ({
         size="md"
       >
         <DrawerOverlay />
-        <DrawerContent bg="dark.bgSecondary">
-          <DrawerCloseButton color="brand.main" />
-          <DrawerHeader>Create a Private Room</DrawerHeader>
+        <DrawerContent bg={`${colorMode}.bg.secondary`}>
+          <DrawerCloseButton
+            color={`${colorMode}.brand.primary`}
+            _hover={{
+              bg: `${colorMode}.brand.tertiary`,
+              color: `${colorMode}.brand.main`,
+            }}
+            _focus={{
+              bg: `${colorMode}.brand.tertiary`,
+              color: `${colorMode}.brand.main`,
+              boxShadow: 'var(--chakra-shadows-outline)',
+            }}
+          />
+          <DrawerHeader color={`${colorMode}.brand.main`} fontWeight="thin">
+            Create a Private Room
+          </DrawerHeader>
           <DrawerBody>
             <Flex direction="column" justify="space-evenly" h="100%">
               <InputGroup justifySelf="start" mb="1rem">
                 <InputLeftAddon
-                  children="Topic"
-                  bg="dark.bgTertiary"
-                  color="brand.main"
+                  bg={`${colorMode}.bg.tertiary`}
+                  color={`${colorMode}.text.primary`}
                   w="5rem"
                   border="none"
-                />
+                >
+                  Topic
+                </InputLeftAddon>
                 <Input
                   variant="outline"
                   value={topicValue}
                   onChange={topicOnChange}
                   placeholder="Choose a topic for your private room"
                   aria-label="Choose a topic for your private room"
-                  color="whiteAlpha.800"
-                  border="none"
+                  color={`${colorMode}.text.primary`}
+                  border="1px solid"
+                  borderColor={`${colorMode}.bg.primary`}
+                  _placeholder={{ color: `${colorMode}.text.secondary` }}
                 />
               </InputGroup>
               <InputGroup mb="1rem">
                 <InputLeftAddon
-                  children="Filter"
-                  bg="dark.bgTertiary"
-                  color="brand.main"
+                  bg={`${colorMode}.bg.tertiary`}
+                  color={`${colorMode}.text.primary`}
                   w="5rem"
                   border="none"
-                />
+                >
+                  Filter
+                </InputLeftAddon>
                 <Input
                   variant="outline"
                   value={usernameFilter}
                   onChange={(e) => setUsernameFilter(e.target.value)}
                   placeholder="Search users by username"
-                  color="whiteAlpha.800"
-                  border="none"
+                  color={`${colorMode}.text.primary`}
+                  border="1px solid"
+                  borderColor={`${colorMode}.bg.primary`}
+                  _placeholder={{ color: `${colorMode}.text.secondary` }}
                 />
               </InputGroup>
               <SelectUsersToInvite
@@ -107,18 +129,19 @@ const InviteDrawer = ({
               onClick={onClose}
               mr="1rem"
               w="5rem"
-              color="whiteAlpha.800"
-              bg="brand.secondary"
-              _hover={{ bg: 'brand.tertiary' }}
-              borderColor="dark.bg"
+              color={`${colorMode}.text.primary`}
+              bg={`${colorMode}.bg.secondary`}
+              _hover={{ bg: `${colorMode}.brand.tertiary` }}
+              border="2px solid"
+              borderColor={`${colorMode}.bg.primary`}
             >
               Cancel
             </Button>
             <Button
               w="5rem"
-              colorScheme="blue"
               onClick={async () => await drawerAction()}
-              bg="dark.bgPrimary"
+              bg={`${colorMode}.brand.primary`}
+              _hover={{ bg: `${colorMode}.brand.main` }}
             >
               Start
             </Button>

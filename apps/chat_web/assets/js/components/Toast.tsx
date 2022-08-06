@@ -7,7 +7,7 @@ interface Props {
   onAccept: MouseEventHandler<HTMLButtonElement>;
 }
 
-const Toast = ({ owner, onClose, onAccept }) => {
+const Toast = ({ owner, onClose, onAccept }: Props) => {
   return (
     <Box bg="green.200" p="10">
       <Text>{owner} has invited you to join their private room!</Text>
