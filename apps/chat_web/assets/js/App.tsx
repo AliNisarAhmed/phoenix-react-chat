@@ -1,4 +1,4 @@
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -10,43 +10,7 @@ import Invite from './routes/Invite';
 import Lobby from './routes/Lobby';
 import PrivateRoom from './routes/PrivateRoom';
 import Welcome from './routes/Welcome';
-
-const theme = extendTheme({
-  colors: {
-    aquamarine: {
-      100: '#b0ffe4',
-      200: '#80ffd4',
-    },
-    bisque: {
-      100: '#ffdcb3',
-      200: '#fec583',
-    },
-    darkslateblue: {
-      100: '#cecaec',
-      200: '#ada6d9',
-    },
-    brand: {
-      main: '#fe20fe',
-      primary: '#ff80ff',
-      secondary: '#4e0048',
-      tertiary: '#1d001d',
-    },
-    dark: {
-      bg: '#121212',
-      bgPrimary: '#2d3748',
-      bgSecondary: '#1a202c',
-      bgTertiary: '#011627',
-    },
-    lightBg: '',
-  },
-  styles: {
-    global: (props: { colorMode: string }) => ({
-      'html, body': {
-        backgroundColor: props.colorMode === 'dark' ? 'white' : '#121212',
-      },
-    }),
-  },
-});
+import { theme } from './theme';
 
 const App = () => {
   return (

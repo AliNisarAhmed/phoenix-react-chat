@@ -23,6 +23,7 @@ import {
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import * as localStorageAPI from '../localStorage';
 import { PrivateRoom } from '../types';
+import ColorModeButton from './ColormodeButton';
 import OnlineStatus from './OnlineStatus';
 import UsernameText from './UsernameText';
 
@@ -100,6 +101,7 @@ const Navbar = () => {
       <Flex align="center">
         <NavbarHeading room={room} currentUser={currentUser} />
         <OnlineStatus size="lg" />
+        <ColorModeButton />
       </Flex>
       <Outlet context={{ room, setRoom }} />
     </>
