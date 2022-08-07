@@ -1,4 +1,12 @@
-import { Checkbox, CheckboxGroup, Flex, Text, VStack } from '@chakra-ui/react';
+import {
+  Center,
+  Checkbox,
+  CheckboxGroup,
+  Flex,
+  Text,
+  VStack,
+  useColorMode,
+} from '@chakra-ui/react';
 import React from 'react';
 
 import { User } from '../types';
@@ -15,6 +23,7 @@ const SelectUsersToInvite = ({
   groupValue,
   groupOnChange,
 }: Props) => {
+  const { colorMode } = useColorMode();
   return (
     <Flex
       w="100%"
@@ -27,7 +36,9 @@ const SelectUsersToInvite = ({
       align="start"
     >
       {onlineUsers.length === 0 ? (
-        <Text>No users online now</Text>
+        <Center w="100%" h="100%">
+          <Text color={`${colorMode}.text.secondary`}>No users online now</Text>
+        </Center>
       ) : (
         <CheckboxGroup value={groupValue} onChange={groupOnChange}>
           <VStack>

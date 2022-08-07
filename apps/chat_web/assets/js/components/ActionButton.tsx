@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, useColorMode } from '@chakra-ui/react';
 import React, { MouseEventHandler } from 'react';
 
 interface Props {
@@ -7,9 +7,15 @@ interface Props {
 
 const ActionButton = React.forwardRef<HTMLButtonElement, Props>(
   ({ onClick }, ref) => {
+    const { colorMode } = useColorMode();
     return (
       <Box flexGrow={0} alignSelf="center">
-        <Button colorScheme="blue" onClick={onClick} ref={ref}>
+        <Button
+          onClick={onClick}
+          ref={ref}
+          bg={`${colorMode}.brand.primary`}
+          _hover={{ bg: `${colorMode}.brand.tertiary` }}
+        >
           Start private channel
         </Button>
       </Box>

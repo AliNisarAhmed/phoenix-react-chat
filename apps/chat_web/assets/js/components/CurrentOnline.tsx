@@ -1,5 +1,4 @@
 import {
-  Container,
   Flex,
   Heading,
   Icon,
@@ -30,7 +29,13 @@ const CurrentOnline = ({ onlineUsers, privateRoom, kickUser }: Props) => {
 
   return (
     <Flex direction="column" flexGrow={1} w="100%" p={0}>
-      <Heading as="h6" size="sm" pb="0.5rem" color={`${colorMode}.brand.main`}>
+      <Heading
+        textAlign="center"
+        as="h6"
+        size="sm"
+        pb="0.5rem"
+        color={`${colorMode}.brand.main`}
+      >
         Online right now
       </Heading>
       {onlineUsers.map((user) => {

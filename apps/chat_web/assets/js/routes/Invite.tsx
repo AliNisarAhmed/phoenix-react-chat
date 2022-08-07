@@ -1,5 +1,5 @@
 import ky from 'ky';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useNavbarContext } from '../components/Navbar';
@@ -8,9 +8,7 @@ import { useCurrentUserContext } from '../context/CurrentUserContext';
 import * as localStorageAPI from '../localStorage';
 import { PrivateRoom, User } from '../types';
 
-interface Props {}
-
-const Invite = ({}: Props) => {
+const Invite = () => {
   const { inviteCode } = useParams();
   const navigate = useNavigate();
 
@@ -22,7 +20,7 @@ const Invite = ({}: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let timer;
+    let timer: number;
     if (currentUser) {
       checkInvite(currentUser);
     } else {
@@ -37,7 +35,9 @@ const Invite = ({}: Props) => {
         if (error.response.status === 404) {
           setError('Room not found, taking you to lobby');
         } else {
-          setError("An error occurred while joining, going to Lobby instead...")
+          setError(
+            'An error occurred while joining, going to Lobby instead...',
+          );
         }
         timer = setTimeout(() => {
           navigate('/lobby');

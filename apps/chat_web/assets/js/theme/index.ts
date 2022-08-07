@@ -25,7 +25,7 @@ export const theme = extendTheme({
         main: '#fe20fe',
         primary: '#a91079',
         secondary: '#570a57',
-        tertiary: '#2E0249',
+        tertiary: '#760b54',
       },
       bg: {
         main: '#121212',

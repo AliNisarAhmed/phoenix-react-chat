@@ -45,7 +45,7 @@ const UsernameSelection = ({ onUsernameSelect }: Props) => {
             </Text>
             <VStack spacing="1rem">
               {users.map((u, index) => (
-                <Flex alignItems="center">
+                <Flex alignItems="center" key={u.username}>
                   <Button
                     onClick={() => onUsernameSelect(u)}
                     bg="dark.bgPrimary"

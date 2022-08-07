@@ -13,7 +13,7 @@ import {
   InputLeftAddon,
   useColorMode,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { RefObject, useState } from 'react';
 
 import { User } from '../types';
 import SelectUsersToInvite from './SelectUsersToInvite';
@@ -21,7 +21,7 @@ import SelectUsersToInvite from './SelectUsersToInvite';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  btnRef: any;
+  btnRef: RefObject<HTMLButtonElement>;
   onlineUsers: User[];
   drawerAction: () => Promise<void>;
   groupValue: string[];
@@ -141,7 +141,7 @@ const InviteDrawer = ({
               w="5rem"
               onClick={async () => await drawerAction()}
               bg={`${colorMode}.brand.primary`}
-              _hover={{ bg: `${colorMode}.brand.main` }}
+              _hover={{ bg: `${colorMode}.brand.tertiary` }}
             >
               Start
             </Button>

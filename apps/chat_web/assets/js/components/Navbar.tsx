@@ -22,7 +22,7 @@ import {
 
 import { useCurrentUserContext } from '../context/CurrentUserContext';
 import * as localStorageAPI from '../localStorage';
-import { PrivateRoom } from '../types';
+import { PrivateRoom, User } from '../types';
 import ColorModeButton from './ColormodeButton';
 import OnlineStatus from './OnlineStatus';
 import UsernameText from './UsernameText';
@@ -116,7 +116,13 @@ export function useNavbarContext() {
   return useOutletContext<ContextType>();
 }
 
-const NavbarHeading = ({ room, currentUser }) => {
+const NavbarHeading = ({
+  room,
+  currentUser,
+}: {
+  room: PrivateRoom;
+  currentUser: User;
+}) => {
   const navigate = useNavigate();
 
   if (room === null) {
@@ -149,7 +155,7 @@ const NavbarHeading = ({ room, currentUser }) => {
 
   return (
     <Heading as="h2" size="lg">
-      In {room.owner}'s private room
+      In {room.owner}&apos;s private room
     </Heading>
   );
 
